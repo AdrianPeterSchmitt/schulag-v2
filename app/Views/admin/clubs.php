@@ -110,24 +110,27 @@
                                     <?php endif; ?>
                                 </div>
                                 
-                                <p class="text-gray-600 mb-4"><?= esc($club['beschreibung']) ?></p>
+                                <p class="text-gray-600 mb-4"><?= esc($club['beschreibung_kurz'] ?? 'Keine Beschreibung') ?></p>
                                 
                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                     <div>
-                                        <span class="text-gray-500">Lehrkraft:</span>
-                                        <p class="font-semibold text-gray-900"><?= esc($club['lehrkraft']) ?></p>
+                                        <span class="text-gray-500">Zweite Lehrkraft:</span>
+                                        <p class="font-semibold text-gray-900"><?= esc($club['zweite_lehrkraft_name'] ?? 'Keine') ?></p>
                                     </div>
                                     
-                                    <?php if (!empty($club['zweite_lehrkraft'])): ?>
-                                    <div>
-                                        <span class="text-gray-500">2. Lehrkraft:</span>
-                                        <p class="font-semibold text-gray-900"><?= esc($club['zweite_lehrkraft']) ?></p>
-                                    </div>
-                                    <?php endif; ?>
                                     
                                     <div>
                                         <span class="text-gray-500">Jahrgänge:</span>
-                                        <p class="font-semibold text-gray-900"><?= esc($club['jahrgaenge']) ?></p>
+                                        <p class="font-semibold text-gray-900">
+                                            <?= isset($club['min_grade']) && isset($club['max_grade']) 
+                                                ? 'Klasse ' . $club['min_grade'] . ' - ' . $club['max_grade'] 
+                                                : 'Alle' ?>
+                                        </p>
+                                    </div>
+                                    
+                                    <div>
+                                        <span class="text-gray-500">Max. Teilnehmer:</span>
+                                        <p class="font-semibold text-gray-900"><?= esc($club['max_teilnehmer'] ?? 'Unbegrenzt') ?></p>
                                     </div>
                                     
                                     <?php if (!empty($club['offers'])): ?>
