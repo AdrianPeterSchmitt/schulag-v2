@@ -171,6 +171,7 @@
 </div>
 
 <!-- Modal: Neue AG -->
+<template x-if="true">
 <div x-data="{ open: false }"
      @open-modal.window="open = ($event.detail.modal === 'newClubModal')"
      @close-modal.window="open = false"
@@ -200,11 +201,11 @@
             <h2 class="text-2xl font-bold text-gray-900 mb-6">Neue AG erstellen</h2>
             
             <!-- Form -->
-            <form hx-post="<?= base_url('admin/clubs/create') ?>"
-                  hx-headers='{"X-CSRF-TOKEN": "<?= csrf_hash() ?>"}'
+            <form x-init="htmx.process($el)"
+                  hx-post="<?= base_url('admin/clubs/create') ?>"
                   hx-target="#clubs-list"
                   hx-swap="innerHTML"
-                  @htmx:after-request="open = false"
+                  @htmx:after-request="if(event.detail.successful) open = false"
                   class="space-y-4">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -277,5 +278,41 @@
         </div>
     </div>
 </div>
+</template>
+
+<!-- Modal: AG bearbeiten -->
+<template x-if="true">
+<div x-data="{ open: false, clubId: null }"
+     @open-modal.window="if($event.detail.modal === 'editClubModal'){ open = true; clubId = $event.detail.id; }"
+     @close-modal.window="open = false"
+     x-show="open"
+     x-cloak
+     class="fixed inset-0 z-50 overflow-y-auto"
+     style="display: none;">
+    <div class="fixed inset-0 bg-black/50" @click="open = false"></div>
+    <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="relative bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6" @click.stop>
+            <button @click="open = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="text-xl font-bold text-gray-900 mb-4">AG bearbeiten</h2>
+            <form x-init="$nextTick(() => { if (clubId) { const meta = document.querySelector('meta[name=\'<?= csrf_header() ?>\']'); const token = meta ? meta.content : ''; $el.setAttribute('hx-put', '<?= base_url('admin/clubs/') ?>' + clubId); $el.setAttribute('hx-headers', JSON.stringify({'<?= csrf_header() ?>': token})); htmx.process($el); } })"
+                  hx-target="#clubs-list" hx-swap="innerHTML"
+                  @htmx:after-request="if(event.detail.successful) open = false"
+                  class="space-y-4">
+                <?= csrf_field() ?>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">AG-Titel *</label>
+                    <input type="text" name="titel" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" @click="open = false" class="px-4 py-2 border border-gray-300 rounded-lg">Abbrechen</button>
+                    <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</template>
 
 <?= $this->endSection() ?>

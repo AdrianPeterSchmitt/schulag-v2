@@ -24,6 +24,19 @@
                 </div>
 
                 <div class="flex items-center space-x-2">
+                    <button type="button"
+                            x-data
+                            data-id="<?= (int)$klasse['id'] ?>"
+                            data-name="<?= esc($klasse['name']) ?>"
+                            data-jahrgang="<?= (int)$klasse['jahrgang'] ?>"
+                            data-klassenleitung="<?= esc($klasse['klassenleitung'] ?? '') ?>"
+                            @click="$dispatch('open-edit-klasse', { id: +$el.dataset.id, name: $el.dataset.name, jahrgang: +$el.dataset.jahrgang, klassenleitung: $el.dataset.klassenleitung })"
+                            class="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                        <span>Bearbeiten</span>
+                    </button>
                     <a href="<?= base_url('admin/klassen/' . $klasse['id']) ?>" 
                        class="px-4 py-2 text-primary hover:bg-primary/10 rounded-lg transition flex items-center space-x-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -32,10 +45,8 @@
                         <span>Schüler</span>
                     </a>
 
-                    <button hx-delete="<?= base_url('admin/klassen/' . $klasse['id']) ?>"
-                            hx-target="#klassen-list"
-                            hx-swap="innerHTML"
-                            hx-confirm="Klasse '<?= esc($klasse['name']) ?>' wirklich löschen? Alle Schüler werden ebenfalls gelöscht!"
+                    <button type="button"
+                            @click="$store.confirm.open(`Klasse '<?= esc($klasse['name']) ?>' wirklich löschen? Alle Schüler werden ebenfalls gelöscht!`, () => { htmx.ajax('DELETE', '<?= base_url('admin/klassen/' . $klasse['id']) ?>', { target: '#klassen-list', swap: 'innerHTML' }) })"
                             class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>

@@ -23,6 +23,7 @@ $routes->group('admin', ['filter' => 'auth:admin'], function($routes) {
     // Klassen
     $routes->get('klassen', 'Admin::klassen');
     $routes->post('klassen/create', 'Admin::createKlasse');
+    $routes->put('klassen/(:num)', 'Admin::updateKlasse/$1');
     $routes->delete('klassen/(:num)', 'Admin::deleteKlasse/$1');
     $routes->get('klassen/(:num)', 'Admin::showKlasse/$1');
     
@@ -34,6 +35,7 @@ $routes->group('admin', ['filter' => 'auth:admin'], function($routes) {
     // AGs
     $routes->get('clubs', 'Admin::clubs');
     $routes->post('clubs/create', 'Admin::createClub');
+    // $routes->put('clubs/(:num)', 'Admin::updateClub/$1'); // zurückgestellt
     $routes->delete('clubs/(:num)', 'Admin::deleteClub/$1');
 });
 

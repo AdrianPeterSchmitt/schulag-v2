@@ -25,7 +25,7 @@ class KlasseModel extends Model
 
     // Validation
     protected $validationRules = [
-        'name' => 'required|min_length[2]',
+        'name' => 'required|min_length[1]',
         'jahrgang' => 'required|integer|greater_than[0]',
     ];
 

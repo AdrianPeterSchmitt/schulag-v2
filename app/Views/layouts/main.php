@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="<?= csrf_header() ?>" content="<?= csrf_hash() ?>">
     <title><?= $title ?? 'SchulAG v2' ?></title>
     
     <!-- Tailwind CSS -->
@@ -14,23 +15,136 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    <!-- Debug System -->
+    <script>
+        // Debug Logger für die Konsole
+        window.SchulAGDebug = {
+            enabled: true, // auf false setzen um Debugging zu deaktivieren
+            
+            log: function(category, message, data = null) {
+                if (!this.enabled) return;
+                
+                const timestamp = new Date().toLocaleTimeString('de-DE');
+                const style = this.getStyle(category);
+                
+                console.log(
+                    `%c[${timestamp}] [${category}]%c ${message}`,
+                    style,
+                    'color: inherit'
+                );
+                
+                if (data !== null) {
+                    console.log('📊 Data:', data);
+                }
+            },
+            
+            getStyle: function(category) {
+                const styles = {
+                    'Alpine': 'background: #77C1D2; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold',
+                    'HTMX': 'background: #3D72A4; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold',
+                    'Modal': 'background: #9B59B6; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold',
+                    'Error': 'background: #E74C3C; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold',
+                    'Success': 'background: #27AE60; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold',
+                    'Info': 'background: #3498DB; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold'
+                };
+                return styles[category] || styles['Info'];
+            },
+            
+            error: function(message, error = null) {
+                this.log('Error', message, error);
+                if (error && error.stack) {
+                    console.error('Stack Trace:', error.stack);
+                }
+            }
+        };
+        
+        // Global Error Handler
+        window.addEventListener('error', function(event) {
+            SchulAGDebug.error('JavaScript Error aufgetreten', {
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno
+            });
+        });
+    </script>
+    
     <!-- Global Alpine Store -->
     <script>
         document.addEventListener('alpine:init', () => {
+            SchulAGDebug.log('Alpine', 'Alpine.js wird initialisiert...');
+            
             Alpine.store('editModal', {
                 show: false,
                 schueler: null,
                 
                 open(data) {
+                    SchulAGDebug.log('Modal', 'Modal wird geöffnet', data);
                     this.schueler = data;
                     this.show = true;
+                    SchulAGDebug.log('Modal', 'Modal Status: show=' + this.show);
                 },
                 
                 close() {
+                    SchulAGDebug.log('Modal', 'Modal wird geschlossen');
                     this.show = false;
                     this.schueler = null;
                 }
             });
+            
+            // Reusable Bestätigungsdialog für htmx (ersetzt Browser confirm)
+            Alpine.store('confirm', {
+                show: false,
+                message: '',
+                onConfirm: null,
+                open(message, onConfirm) {
+                    this.message = message || 'Aktion wirklich ausführen?';
+                    this.onConfirm = onConfirm;
+                    this.show = true;
+                },
+                confirm() {
+                    if (typeof this.onConfirm === 'function') {
+                        this.onConfirm();
+                    }
+                    this.close();
+                },
+                close() {
+                    this.show = false;
+                    this.message = '';
+                    this.onConfirm = null;
+                }
+            });
+            
+            SchulAGDebug.log('Alpine', 'editModal Store wurde registriert');
+        });
+        
+        // Alpine.js geladen Event
+        document.addEventListener('alpine:initialized', () => {
+            SchulAGDebug.log('Alpine', '✅ Alpine.js erfolgreich initialisiert!');
+            
+            // Überprüfe, ob der editModal Store verfügbar ist
+            if (Alpine.store('editModal')) {
+                SchulAGDebug.log('Alpine', '✅ editModal Store ist verfügbar', Alpine.store('editModal'));
+            } else {
+                SchulAGDebug.error('editModal Store ist NICHT verfügbar!');
+            }
+        });
+        
+        // DOMContentLoaded Event
+        document.addEventListener('DOMContentLoaded', () => {
+            SchulAGDebug.log('Info', '📄 Seite vollständig geladen');
+            
+            // Gib eine Übersicht aus
+            console.log('%c🎓 SchulAG v2 Debug System', 'font-size: 20px; font-weight: bold; color: #667eea;');
+            console.log('%c──────────────────────────────────────', 'color: #667eea;');
+            console.log('Verwenden Sie SchulAGDebug.enabled = false um das Debugging zu deaktivieren');
+            console.log('Debug-Kategorien: Alpine, HTMX, Modal, Error, Success, Info');
+            console.log('%c──────────────────────────────────────', 'color: #667eea;');
+            
+            // Überprüfe wichtige Komponenten
+            SchulAGDebug.log('Info', 'Alpine.js verfügbar: ' + (typeof Alpine !== 'undefined'));
+            SchulAGDebug.log('Info', 'HTMX verfügbar: ' + (typeof htmx !== 'undefined'));
+            SchulAGDebug.log('Info', 'Tailwind verfügbar: ' + (typeof tailwind !== 'undefined'));
         });
     </script>
     
@@ -49,9 +163,18 @@
     </script>
     
     <style>
-        /* Alpine.js Cloak */
+        /* Alpine.js Cloak - nur vor Initialisierung verstecken */
         [x-cloak] {
             display: none !important;
+        }
+        
+        /* Sicherstellen, dass Modals sichtbar sind wenn show=true */
+        [x-show] {
+            display: none;
+        }
+        
+        [x-show][style*="display: flex"] {
+            display: flex !important;
         }
         
         /* HTMX Loading Indicator */
@@ -157,6 +280,30 @@
         </template>
     </div>
 
+<!-- Global Confirm Modal -->
+<div x-data
+     x-show="$store.confirm.show"
+     x-cloak
+     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4">
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="text-xl font-bold text-gray-900">Bestätigung</h3>
+            <button @click="$store.confirm.close()" class="text-gray-400 hover:text-gray-600 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <p class="text-gray-800" x-text="$store.confirm.message"></p>
+            <div class="flex space-x-3 pt-6">
+                <button @click="$store.confirm.close()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">Abbrechen</button>
+                <button @click="$store.confirm.confirm()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">OK</button>
+            </div>
+        </div>
+    </div>
+ </div>
+
     <!-- Global Loading Indicator (hidden by default, shown only during HTMX requests) -->
     <div id="global-loading" 
          class="htmx-indicator fixed inset-0 bg-black/50 items-center justify-center z-50"
@@ -174,13 +321,54 @@
     
     <!-- HTMX Loading Events -->
     <script>
-        document.addEventListener('htmx:beforeRequest', function() {
+        document.addEventListener('htmx:beforeRequest', function(event) {
+            SchulAGDebug.log('HTMX', '🚀 Request wird gestartet...', {
+                method: event.detail.verb,
+                url: event.detail.path
+            });
             const loading = document.getElementById('global-loading');
             loading.style.display = 'flex';
         });
-        document.addEventListener('htmx:afterRequest', function() {
+        
+        document.addEventListener('htmx:afterRequest', function(event) {
+            SchulAGDebug.log('HTMX', '✅ Request abgeschlossen', {
+                successful: event.detail.successful,
+                status: event.detail.xhr?.status
+            });
             const loading = document.getElementById('global-loading');
             loading.style.display = 'none';
+        });
+        
+        document.addEventListener('htmx:responseError', function(event) {
+            SchulAGDebug.error('HTMX Response Error', {
+                status: event.detail.xhr?.status,
+                response: event.detail.xhr?.responseText
+            });
+        });
+        
+        document.addEventListener('htmx:sendError', function(event) {
+            SchulAGDebug.error('HTMX Send Error', {
+                error: event.detail.error
+            });
+        });
+
+        // Verhindere Content-Tausch bei Fehlerstatus (422/4xx/5xx) und zeige stattdessen Toasts
+        document.addEventListener('htmx:beforeSwap', function(event) {
+            const status = event.detail.xhr?.status || 0;
+            if (status >= 400) {
+                event.detail.shouldSwap = false;
+                const errText = event.detail.xhr?.responseText || '';
+                SchulAGDebug.error('Swap bei Fehler unterdrückt', { status, errText });
+                try {
+                    const json = JSON.parse(errText);
+                    const firstMsg = json?.errors ? Object.values(json.errors)[0] : null;
+                    if (firstMsg) {
+                        showToast?.('Validierung', firstMsg, '⚠️');
+                    }
+                } catch (_) {
+                    // ignore parse errors, already logged
+                }
+            }
         });
     </script>
 
@@ -189,10 +377,22 @@
         // Configure HTMX
         document.body.addEventListener('htmx:configRequest', (event) => {
             event.detail.headers['X-Requested-With'] = 'XMLHttpRequest';
+            // CSRF Header für alle HTMX-Requests setzen (POST/PUT/DELETE)
+            const csrfMeta = document.querySelector('meta[name="<?= csrf_header() ?>"]');
+            if (csrfMeta && csrfMeta.content) {
+                event.detail.headers['<?= csrf_header() ?>'] = csrfMeta.content;
+            }
+            SchulAGDebug.log('HTMX', 'Request konfiguriert', {
+                method: event.detail.verb,
+                path: event.detail.path,
+                headers: event.detail.headers,
+                parameters: event.detail.parameters
+            });
         });
         
         // Show toast notifications
         function showToast(title, message, icon = '✓') {
+            SchulAGDebug.log('Info', `Toast: ${title} - ${message}`);
             window.dispatchEvent(new CustomEvent('toast', {
                 detail: {
                     id: Date.now(),
@@ -205,32 +405,37 @@
         
         // Listen for HTMX events
         document.body.addEventListener('htmx:afterSwap', (event) => {
+            SchulAGDebug.log('HTMX', '🔄 Content wurde getauscht', {
+                target: event.detail.target?.id || 'unknown'
+            });
+            
             // Check for success messages
             const successMsg = event.detail.xhr.getResponseHeader('X-Success-Message');
             if (successMsg) {
                 showToast('Erfolg', successMsg, '✅');
             }
-            
-            // Re-attach edit button listeners nach HTMX-Swap
-            attachEditButtonListeners();
+
+            // Re-initialize Alpine.js for dynamically loaded content
+            const target = event.detail.target || event.target;
+            if (target && window.Alpine && typeof Alpine.initTree === 'function') {
+                SchulAGDebug.log('Alpine', 'Initialisiere Alpine für neuen Content...', {
+                    target: target.id || target.className
+                });
+                try {
+                    Alpine.mutateDom(() => {
+                        Alpine.initTree(target);
+                    });
+                    SchulAGDebug.log('Alpine', '✅ Alpine für neuen Content initialisiert');
+                } catch (error) {
+                    SchulAGDebug.error('Fehler beim Initialisieren von Alpine', error);
+                }
+            }
         });
         
-        // Event-Listener für Edit-Buttons (für dynamisch geladene Buttons)
-        function attachEditButtonListeners() {
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const data = JSON.parse(this.getAttribute('data-schueler'));
-                    
-                    // Trigger Alpine Store direkt
-                    if (window.Alpine && window.Alpine.store) {
-                        window.Alpine.store('editModal').open(data);
-                    }
-                });
-            });
-        }
-        
-        // Initial attachment beim Laden
-        document.addEventListener('DOMContentLoaded', attachEditButtonListeners);
+        // Log when content is settled
+        document.body.addEventListener('htmx:afterSettle', (event) => {
+            SchulAGDebug.log('HTMX', '✨ Content ist vollständig geladen und settled');
+        });
     </script>
 </body>
 </html>

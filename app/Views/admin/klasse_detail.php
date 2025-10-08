@@ -22,133 +22,29 @@
         </div>
         
         <!-- Schüler hinzufügen Button -->
-        <button @click="showModal = true" 
-                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition flex items-center space-x-2 shadow-lg">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            <span>Neuer Schüler</span>
-        </button>
-    </div>
-
-    <!-- Statistik-Karten -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Schüler gesamt</p>
-                    <p class="text-3xl font-bold text-gray-900"><?= count($klasse['schueler']) ?></p>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Typ G</p>
-                    <p class="text-3xl font-bold text-gray-900">
-                        <?= count(array_filter($klasse['schueler'], fn($s) => $s['typ_gl'] === 'G')) ?>
-                    </p>
-                </div>
-                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span class="text-2xl font-bold text-green-600">G</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Typ LE</p>
-                    <p class="text-3xl font-bold text-gray-900">
-                        <?= count(array_filter($klasse['schueler'], fn($s) => $s['typ_gl'] === 'LE')) ?>
-                    </p>
-                </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span class="text-xl font-bold text-purple-600">LE</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Schüler Liste -->
-    <div class="bg-white rounded-xl shadow-md overflow-hidden">
-        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
-            <h2 class="text-xl font-bold text-gray-900">Schüler-Liste</h2>
-        </div>
-
-        <?php if (empty($klasse['schueler'])): ?>
-            <!-- Empty State -->
-            <div class="p-12 text-center">
-                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        <div>
+            <p x-text="'showModal Status: ' + showModal" class="text-xs text-gray-500 mb-2"></p>
+            <button @click="showModal = true; console.log('Button geklickt, showModal:', showModal)" 
+                    class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition flex items-center space-x-2 shadow-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
-                <h3 class="text-lg font-semibold text-gray-700 mb-2">Noch keine Schüler</h3>
-                <p class="text-gray-500">Fügen Sie den ersten Schüler für diese Klasse hinzu</p>
-            </div>
-        <?php else: ?>
-            <!-- Schüler Tabelle -->
-            <div id="schueler-list" class="divide-y divide-gray-200">
-                <?php foreach ($klasse['schueler'] as $schueler): ?>
-                    <div class="p-6 hover:bg-gray-50 transition flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <!-- Avatar -->
-                            <div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold">
-                                <?= esc(substr($schueler['name'], 0, 2)) ?>
-                            </div>
-                            
-                            <!-- Info -->
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-900"><?= esc($schueler['name']) ?></h3>
-                                <div class="flex items-center space-x-3 text-sm text-gray-600">
-                                    <span class="flex items-center space-x-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                        </svg>
-                                        <span><?= esc($schueler['typ_gl']) ?></span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="flex items-center space-x-2">
-                            <button type="button"
-                                    class="edit-btn px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition flex items-center space-x-2"
-                                    data-schueler='<?= json_encode(['id' => $schueler['id'], 'name' => $schueler['name'], 'typ_gl' => $schueler['typ_gl']]) ?>'>
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                                <span>Bearbeiten</span>
-                            </button>
-                            <button hx-delete="<?= base_url('admin/klassen/' . $klasse['id'] . '/schueler/' . $schueler['id']) ?>"
-                                    hx-target="#schueler-list"
-                                    hx-swap="innerHTML"
-                                    hx-confirm="Schüler '<?= esc($schueler['name']) ?>' wirklich löschen?"
-                                    class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition flex items-center space-x-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                </svg>
-                                <span>Löschen</span>
-                            </button>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+                <span>Neuer Schüler</span>
+            </button>
+        </div>
     </div>
-</div>
 
-<!-- Modal: Neuer Schüler -->
-<div x-show="showModal" 
-     x-cloak
-     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-     @click.self="showModal = false">
+    <!-- Content Container (HTMX Target) -->
+    <div id="klasse-content">
+        <?= view('admin/partials/klasse_content', ['klasse' => $klasse]) ?>
+    </div>
+
+    <!-- Modal: Neuer Schüler -->
+    <template x-if="showModal">
+    <div @click.self="showModal = false"
+         x-init="htmx.process($el)"
+         x-data="{ errors: {} }"
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all"
          @click.stop>
@@ -156,7 +52,7 @@
         <!-- Modal Header -->
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <h3 class="text-xl font-bold text-gray-900">Neuer Schüler</h3>
-            <button @click="showModal = false" class="text-gray-400 hover:text-gray-600 transition">
+            <button @click="showModal = false; errors = {};" class="text-gray-400 hover:text-gray-600 transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -165,10 +61,16 @@
 
         <!-- Modal Body -->
         <form hx-post="<?= base_url('admin/klassen/' . $klasse['id'] . '/schueler') ?>"
-              hx-target="#schueler-list"
+              hx-target="#klasse-content"
               hx-swap="innerHTML"
-              @htmx:after-request="if(event.detail.successful) showModal = false"
+              @htmx:after-request="if(event.detail.successful) { showModal = false; errors = {}; $el.reset(); }"
+              @htmx:response-error="
+                  const resp = JSON.parse(event.detail.xhr.response);
+                  if (resp.errors) errors = resp.errors;
+              "
               class="p-6 space-y-4">
+            
+            <?= csrf_field() ?>
             
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
@@ -176,24 +78,28 @@
                        name="name" 
                        required
                        placeholder="z.B. Max Mustermann"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                       :class="{ 'border-red-500': errors.name }">
+                <p x-show="errors.name" x-text="errors.name" class="text-red-500 text-sm mt-1"></p>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Typ (G/LE)</label>
                 <select name="typ_gl" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        :class="{ 'border-red-500': errors.typ_gl }">
                     <option value="">Bitte wählen...</option>
                     <option value="G">G (Geistige Entwicklung)</option>
                     <option value="LE">LE (Lernen)</option>
                 </select>
+                <p x-show="errors.typ_gl" x-text="errors.typ_gl" class="text-red-500 text-sm mt-1"></p>
             </div>
 
             <!-- Buttons -->
             <div class="flex space-x-3 pt-4">
                 <button type="button" 
-                        @click="showModal = false"
+                        @click="showModal = false; errors = {}; $el.closest('form').reset();"
                         class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
                     Abbrechen
                 </button>
@@ -204,13 +110,15 @@
             </div>
         </form>
     </div>
-</div>
+    </div>
+    </template>
 
-<!-- Modal: Schüler bearbeiten (Alpine Store) -->
-<div x-show="$store.editModal.show" 
-     x-cloak
-     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-     @click.self="$store.editModal.close()">
+    <!-- Modal: Schüler bearbeiten (Alpine Store) -->
+    <template x-if="$store.editModal.show">
+    <div @click.self="$store.editModal.close()"
+         x-init="htmx.process($el)"
+         x-data="{ errors: {} }"
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     
     <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all"
          @click.stop>
@@ -218,7 +126,7 @@
         <!-- Modal Header -->
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
             <h3 class="text-xl font-bold text-gray-900">Schüler bearbeiten</h3>
-            <button @click="$store.editModal.close()" class="text-gray-400 hover:text-gray-600 transition">
+            <button @click="$store.editModal.close(); errors = {};" class="text-gray-400 hover:text-gray-600 transition">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -226,11 +134,24 @@
         </div>
 
         <!-- Modal Body -->
-        <form x-show="$store.editModal.schueler"
-              :hx-put="`<?= base_url('admin/klassen/' . $klasse['id'] . '/schueler/') ?>${$store.editModal.schueler?.id}`"
-              hx-target="#schueler-list"
+        <form x-init="$nextTick(() => {
+                const schuelerId = $store.editModal.schueler?.id;
+                if (schuelerId) {
+                    const csrfMeta = document.querySelector('meta[name=\'<?= csrf_header() ?>\']');
+                    const csrfToken = csrfMeta ? csrfMeta.content : '';
+                    $el.setAttribute('hx-put', '<?= base_url('admin/klassen/' . $klasse['id'] . '/schueler/') ?>' + schuelerId);
+                    $el.setAttribute('hx-headers', JSON.stringify({'<?= csrf_header() ?>': csrfToken}));
+                    htmx.process($el);
+                    console.log('Bearbeiten-Form URL:', $el.getAttribute('hx-put'), 'CSRF:', csrfToken);
+                }
+              })"
+              hx-target="#klasse-content"
               hx-swap="innerHTML"
-              @htmx:after-request="if(event.detail.successful) $store.editModal.close()"
+              @htmx:after-request="if(event.detail.successful) { $store.editModal.close(); errors = {}; }"
+              @htmx:response-error="
+                  const resp = JSON.parse(event.detail.xhr.response);
+                  if (resp.errors) errors = resp.errors;
+              "
               class="p-6 space-y-4">
             
             <div>
@@ -240,24 +161,28 @@
                        required
                        :value="$store.editModal.schueler?.name"
                        placeholder="z.B. Max Mustermann"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                       :class="{ 'border-red-500': errors.name }">
+                <p x-show="errors.name" x-text="errors.name" class="text-red-500 text-sm mt-1"></p>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Typ (G/LE)</label>
                 <select name="typ_gl" 
                         required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                        :class="{ 'border-red-500': errors.typ_gl }">
                     <option value="">Bitte wählen...</option>
                     <option value="G" :selected="$store.editModal.schueler?.typ_gl === 'G'">G (Geistige Entwicklung)</option>
                     <option value="LE" :selected="$store.editModal.schueler?.typ_gl === 'LE'">LE (Lernen)</option>
                 </select>
+                <p x-show="errors.typ_gl" x-text="errors.typ_gl" class="text-red-500 text-sm mt-1"></p>
             </div>
 
             <!-- Buttons -->
             <div class="flex space-x-3 pt-4">
                 <button type="button" 
-                        @click="$store.editModal.close()"
+                        @click="$store.editModal.close(); errors = {};"
                         class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
                     Abbrechen
                 </button>
@@ -268,6 +193,8 @@
             </div>
         </form>
     </div>
+    </div>
+    </template>
 </div>
 
 <?= $this->endSection() ?>
