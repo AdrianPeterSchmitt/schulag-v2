@@ -38,7 +38,7 @@ class Allocation extends BaseController
      */
     public function index(): string
     {
-        $schoolyear = '2024/2025'; // TODO: Aus Config holen
+        $schoolyear = getCurrentSchoolyear();
         
         // Statistiken sammeln
         $allOffers = $this->offerModel->getActiveOffers($schoolyear);
@@ -65,8 +65,8 @@ class Allocation extends BaseController
             'klassen_total' => count($allKlassen),
         ];
 
-        // Letzte Durchläufe anzeigen (TODO: Methode implementieren)
-        $recentRuns = [];
+        // Letzte Durchläufe anzeigen
+        $recentRuns = $this->allocationModel->getRecentRuns(5);
 
         // Klassen-Status
         $klassenStatus = [];
@@ -354,13 +354,50 @@ class Allocation extends BaseController
      * @param array<string, mixed> $run
      * @return \CodeIgniter\HTTP\ResponseInterface
      */
-    private function exportPDF(array $run)
+    private function exportPDF(array $run): \CodeIgniter\HTTP\ResponseInterface
     {
-        // TODO: PDF Export implementieren
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'PDF Export noch nicht implementiert'
+        $schoolyear = getCurrentSchoolyear();
+        
+        // Lade alle Daten für den Export
+        $allocations = $this->allocationModel->getAssigned($schoolyear);
+        $offers = $this->offerModel->getActiveOffers($schoolyear);
+        
+        // Gruppiere Allocations nach AG
+        $allocationsByOffer = [];
+        foreach ($allocations as $allocation) {
+            $offerId = $allocation['offer_id'];
+            if (!isset($allocationsByOffer[$offerId])) {
+                $allocationsByOffer[$offerId] = [];
+            }
+            $allocationsByOffer[$offerId][] = $allocation;
+        }
+        
+        // HTML für PDF generieren
+        $html = view('allocation/pdf/export', [
+            'run' => $run,
+            'schoolyear' => $schoolyear,
+            'offers' => $offers,
+            'allocationsByOffer' => $allocationsByOffer,
+            'generatedAt' => date('d.m.Y H:i'),
         ]);
+        
+        // PDF mit Dompdf erstellen
+        $options = new \Dompdf\Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        
+        $dompdf = new \Dompdf\Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        // PDF ausgeben
+        $filename = 'AG-Zuteilung-' . str_replace('/', '-', $schoolyear) . '.pdf';
+        
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->setBody($dompdf->output());
     }
 
     /**
@@ -369,13 +406,90 @@ class Allocation extends BaseController
      * @param array<string, mixed> $run
      * @return \CodeIgniter\HTTP\ResponseInterface
      */
-    private function exportExcel(array $run)
+    private function exportExcel(array $run): \CodeIgniter\HTTP\ResponseInterface
     {
-        // TODO: Excel Export implementieren
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Excel Export noch nicht implementiert'
-        ]);
+        $schoolyear = getCurrentSchoolyear();
+        
+        // Lade alle Daten
+        $allocations = $this->allocationModel->getAssigned($schoolyear);
+        $offers = $this->offerModel->getActiveOffers($schoolyear);
+        
+        // Erstelle Excel-Datei
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Titel
+        $sheet->setTitle('AG-Zuteilungen');
+        $sheet->setCellValue('A1', 'AG-Zuteilungen ' . $schoolyear);
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16);
+        $sheet->mergeCells('A1:F1');
+        
+        // Header
+        $row = 3;
+        $headers = ['AG-Name', 'Schüler-ID', 'Status', 'Zugewiesen am', 'Kapazität', 'Auslastung'];
+        $col = 'A';
+        foreach ($headers as $header) {
+            $sheet->setCellValue($col . $row, $header);
+            $sheet->getStyle($col . $row)->getFont()->setBold(true);
+            $sheet->getStyle($col . $row)->getFill()
+                ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                ->getStartColor()->setRGB('4A5568');
+            $sheet->getStyle($col . $row)->getFont()->getColor()->setRGB('FFFFFF');
+            $col++;
+        }
+        
+        // Daten
+        $row = 4;
+        foreach ($offers as $offer) {
+            $agAllocations = array_filter($allocations, function($a) use ($offer) {
+                return $a['offer_id'] == $offer['id'];
+            });
+            
+            $agName = $offer['club']['titel'] ?? 'Unbekannt';
+            $capacity = $offer['capacity'];
+            $count = count($agAllocations);
+            $auslastung = $capacity > 0 ? round(($count / $capacity) * 100, 1) . '%' : '0%';
+            
+            if (empty($agAllocations)) {
+                // Zeige AG auch wenn keine Zuteilungen
+                $sheet->setCellValue('A' . $row, $agName);
+                $sheet->setCellValue('B' . $row, '-');
+                $sheet->setCellValue('C' . $row, '-');
+                $sheet->setCellValue('D' . $row, '-');
+                $sheet->setCellValue('E' . $row, $capacity);
+                $sheet->setCellValue('F' . $row, $auslastung);
+                $row++;
+            } else {
+                foreach ($agAllocations as $allocation) {
+                    $sheet->setCellValue('A' . $row, $agName);
+                    $sheet->setCellValue('B' . $row, $allocation['student_id']);
+                    $sheet->setCellValue('C' . $row, $allocation['status']);
+                    $sheet->setCellValue('D' . $row, date('d.m.Y', strtotime($allocation['created_at'])));
+                    $sheet->setCellValue('E' . $row, $capacity);
+                    $sheet->setCellValue('F' . $row, $auslastung);
+                    $row++;
+                }
+            }
+        }
+        
+        // Auto-Size Spalten
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+        
+        // Speichern und ausgeben
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $filename = 'AG-Zuteilung-' . str_replace('/', '-', $schoolyear) . '.xlsx';
+        
+        ob_start();
+        $writer->save('php://output');
+        $content = ob_get_clean();
+        
+        return $this->response
+            ->setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->setHeader('Cache-Control', 'max-age=0')
+            ->setBody($content);
     }
 
     /**
@@ -385,7 +499,7 @@ class Allocation extends BaseController
      */
     public function statistics(): string
     {
-        $schoolyear = '2024/2025';
+        $schoolyear = getCurrentSchoolyear();
         $stats = $this->allocationService->getStatistics($schoolyear);
 
         $data = [

@@ -62,7 +62,7 @@ class Klassen extends BaseController
         }
 
         // Get alle aktiven AG-Angebote für das aktuelle Schuljahr
-        $schoolyear = '2024/2025'; // TODO: Aus Config holen
+        $schoolyear = getCurrentSchoolyear();
         $offers = $this->offerModel->getActiveOffers($schoolyear);
         
         // Completion Status berechnen
@@ -89,12 +89,12 @@ class Klassen extends BaseController
             }
             
             // Verfügbare AGs für diesen Schüler filtern
-            $schueler['available_offers'] = $offers; // Temporär: Alle AGs verfügbar
-            // foreach ($offers as $offer) {
-            //     if ($this->clubModel->isAllowedForStudent($offer['club_id'], $schueler['id'])) {
-            //         $schueler['available_offers'][] = $offer;
-            //     }
-            // }
+            $schueler['available_offers'] = [];
+            foreach ($offers as $offer) {
+                if ($this->clubModel->isAllowedForStudent($offer['club_id'], $schueler['id'])) {
+                    $schueler['available_offers'][] = $offer;
+                }
+            }
         }
 
         $data = [

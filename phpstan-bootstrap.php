@@ -44,6 +44,28 @@ if (!function_exists('session')) {
     }
 }
 
+if (!function_exists('getCurrentSchoolyear')) {
+    /**
+     * @return string
+     */
+    function getCurrentSchoolyear(): string {
+        $config = config('SchulAG');
+        return $config->getCurrentSchoolyear();
+    }
+}
+
+if (!function_exists('getAvailableSchoolyears')) {
+    /**
+     * @param int $yearsBack
+     * @param int $yearsForward
+     * @return array<string>
+     */
+    function getAvailableSchoolyears(int $yearsBack = 3, int $yearsForward = 1): array {
+        $config = config('SchulAG');
+        return $config->getAvailableSchoolyears($yearsBack, $yearsForward);
+    }
+}
+
 if (!defined('ENVIRONMENT')) {
     define('ENVIRONMENT', 'development');
 }

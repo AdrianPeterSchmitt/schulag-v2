@@ -187,10 +187,26 @@ class AllocationService
 
             log_message('info', 'Lottery successful for schoolyear: ' . $schoolyear);
 
+            // Speichere Run-Statistiken
+            $runModel = new \App\Models\AllocationRunModel();
+            $runStats = [
+                'schoolyear' => $schoolyear,
+                'total_students' => count($allParticipatingStudentIds),
+                'total_assigned' => count($assignedStudentIds),
+                'total_waitlist' => 0, // Normale Warteliste (aktuell nicht implementiert)
+                'total_rest_waitlist' => count($unassignedStudentIds),
+                'total_offers' => count($offers),
+                'total_capacity' => $capacityCheck['total_capacity'],
+                'algorithm_version' => 'v1.0',
+                'metadata' => [],
+            ];
+            $runId = $runModel->createRun($runStats);
+
             return [
                 'success' => true,
                 'assigned_count' => count($assignedStudentIds),
                 'rest_waitlist_count' => count($unassignedStudentIds),
+                'run_id' => $runId,
             ];
 
         } catch (\Exception $e) {

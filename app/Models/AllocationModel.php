@@ -146,8 +146,8 @@ class AllocationModel extends Model
      */
     public function getLatestRun(): ?array
     {
-        // Simuliert - wird später implementiert wenn Run-Tracking hinzugefügt wird
-        return null;
+        $runModel = new AllocationRunModel();
+        return $runModel->getLatest();
     }
     
     /**
@@ -157,8 +157,18 @@ class AllocationModel extends Model
      */
     public function getRunWithResults(int $runId): ?array
     {
-        // Simuliert - wird später implementiert wenn Run-Tracking hinzugefügt wird
-        return ['id' => $runId, 'results' => []];
+        $runModel = new AllocationRunModel();
+        $run = $runModel->getWithMetadata($runId);
+        
+        if ($run) {
+            // Lade die Allocations die zu diesem Run gehören
+            // (basierend auf Datum-Range oder spezieller Verknüpfung)
+            $run['allocations'] = $this->where('created_at >=', $run['run_date'])
+                                       ->where('created_at <', date('Y-m-d H:i:s', strtotime($run['run_date'] . ' +5 minutes')))
+                                       ->findAll();
+        }
+        
+        return $run;
     }
     
     /**
@@ -168,8 +178,8 @@ class AllocationModel extends Model
      */
     public function getRecentRuns(int $limit = 10): array
     {
-        // Simuliert - wird später implementiert wenn Run-Tracking hinzugefügt wird
-        return [];
+        $runModel = new AllocationRunModel();
+        return $runModel->getRecent($limit);
     }
     
     /**
