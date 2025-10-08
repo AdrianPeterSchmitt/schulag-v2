@@ -23,6 +23,24 @@ defined('APP_NAMESPACE') || define('APP_NAMESPACE', 'App');
  | The path that Composer's autoload file is expected to live. By default,
  | the vendor folder is in the Root directory, but you can customize that here.
  */
+/*
+| --------------------------------------------------------------------------
+| Root Directory Path
+| --------------------------------------------------------------------------
+|
+| The path to the root directory of the application.
+*/
+defined('ROOTPATH') || define('ROOTPATH', realpath(__DIR__ . '/../../') . DIRECTORY_SEPARATOR);
+
+/*
+| --------------------------------------------------------------------------
+| Front Controller Path
+| --------------------------------------------------------------------------
+|
+| The path to the front controller directory (public).
+*/
+defined('FCPATH') || define('FCPATH', ROOTPATH . 'public' . DIRECTORY_SEPARATOR);
+
 defined('COMPOSER_PATH') || define('COMPOSER_PATH', ROOTPATH . 'vendor/autoload.php');
 
 /*
@@ -33,7 +51,7 @@ defined('COMPOSER_PATH') || define('COMPOSER_PATH', ROOTPATH . 'vendor/autoload.
 | The path to the writable directory where CodeIgniter can store temporary
 | files, logs, cache, and session data.
 */
-defined('WRITEPATH') || define('WRITEPATH', ROOTPATH . 'writable/');
+defined('WRITEPATH') || define('WRITEPATH', ROOTPATH . 'writable' . DIRECTORY_SEPARATOR);
 
 /*
  |--------------------------------------------------------------------------
