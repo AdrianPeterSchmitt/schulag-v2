@@ -20,11 +20,14 @@
 # APP
 #--------------------------------------------------------------------
 
-app.baseURL = 'http://localhost:8080/'
+app.baseURL = 'http://localhost/schulag-v2/public/'
 # If you have trouble with `.`, you could also use `_`.
 # app_baseURL = ''
 # app.forceGlobalSecureRequests = false
 # app.CSPEnabled = false
+
+# Toolbar für Browser-Testing deaktivieren
+toolbar.enabled = false
 
 #--------------------------------------------------------------------
 # DATABASE
