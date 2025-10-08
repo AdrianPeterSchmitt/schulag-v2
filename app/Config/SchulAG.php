@@ -28,7 +28,7 @@ class SchulAG extends BaseConfig
      * Automatische Berechnung des Schuljahres
      * Wenn true, wird basierend auf aktuellem Datum berechnet
      */
-    public bool $autoCalculateSchoolyear = true;
+    public bool $autoCalculateSchoolyear = false;
     
     /**
      * Minimum Teilnehmerzahl pro AG
