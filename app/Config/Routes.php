@@ -7,21 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // Home → leitet auf Arbeitsseite um (Login oder Admin)
-$routes->get('/', function() {
-    $session = session();
-    if ($session->get('user_id')) {
-        $role = (string) $session->get('user_role');
-        $normalized = strtoupper($role);
-        $target = match ($normalized) {
-            'ADMIN' => '/admin',
-            'TEACHER' => '/klassen',
-            'COORDINATOR' => '/allocation',
-            default => '/admin',
-        };
-        return redirect()->to($target);
-    }
-    return redirect()->to('/login');
-});
+$routes->get('/', 'Home::index');
 
 // Auth Routes (öffentlich)
 $routes->get('login', 'Auth::login');
