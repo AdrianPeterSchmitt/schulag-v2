@@ -62,8 +62,9 @@ toolbar.enabled = false
 # SESSION
 #--------------------------------------------------------------------
 
-# session.driver = 'CodeIgniter\Session\Handlers\FileHandler'
-# session.savePath = null
+# Database-Session verwenden (statt File-Session)
+session.driver = 'CodeIgniter\Session\Handlers\DatabaseHandler'
+session.savePath = 'ci_sessions'
 
 #--------------------------------------------------------------------
 # LOGGER
