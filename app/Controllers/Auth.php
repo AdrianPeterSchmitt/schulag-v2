@@ -22,7 +22,8 @@ class Auth extends BaseController
     {
         // Wenn bereits eingeloggt → Redirect
         if (session()->get('user_id')) {
-            return redirect()->to('/admin');
+            $target = $this->redirectPathForRole((string) session()->get('user_role'));
+            return redirect()->to($target);
         }
 
         return view('auth/login', ['title' => 'Login']);
@@ -72,16 +73,7 @@ class Auth extends BaseController
         session()->set($sessionData);
 
         // Redirect basierend auf Rolle
-        switch ($user['role']) {
-            case 'admin':
-                return redirect()->to('/admin');
-            case 'teacher':
-                return redirect()->to('/klassen');
-            case 'coordinator':
-                return redirect()->to('/allocation');
-            default:
-                return redirect()->to('/');
-        }
+        return redirect()->to($this->redirectPathForRole((string) ($user['role'] ?? '')));
     }
 
     /**
@@ -93,6 +85,20 @@ class Auth extends BaseController
     {
         session()->destroy();
         return redirect()->to('/login')->with('success', 'Erfolgreich abgemeldet');
+    }
+
+    /**
+     * Berechnet die Ziel-URL anhand der Rolle.
+     */
+    private function redirectPathForRole(string $role): string
+    {
+        $normalized = strtoupper($role);
+        return match ($normalized) {
+            'ADMIN' => '/admin',
+            'TEACHER' => '/klassen',
+            'COORDINATOR' => '/allocation',
+            default => '/admin',
+        };
     }
 
     /**
