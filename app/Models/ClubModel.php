@@ -41,8 +41,10 @@ class ClubModel extends Model
 
     /**
      * Get alle Offers für einen Club
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getOffers($clubId)
+    public function getOffers(int $clubId): array
     {
         $offerModel = new ClubOfferModel();
         return $offerModel->where('club_id', $clubId)->findAll();
@@ -51,7 +53,7 @@ class ClubModel extends Model
     /**
      * Prüft ob ein Club für einen Schüler erlaubt ist
      */
-    public function isAllowedForStudent($clubId, $studentId): bool
+    public function isAllowedForStudent(int $clubId, int $studentId): bool
     {
         $club = $this->find($clubId);
         if (!$club) {
@@ -88,7 +90,7 @@ class ClubModel extends Model
     /**
      * Prüft ob die AG eine zweite Lehrkraft benötigt (ab 12 Teilnehmern)
      */
-    public function requiresZweiteLehrkraft($clubId): bool
+    public function requiresZweiteLehrkraft(int $clubId): bool
     {
         $club = $this->find($clubId);
         return $club && $club['max_teilnehmer'] >= 12;
@@ -97,7 +99,7 @@ class ClubModel extends Model
     /**
      * Prüft ob die AG im Einzelbetreuungs-Bereich ist (6-11 Teilnehmer)
      */
-    public function isEinzelbetreuung($clubId): bool
+    public function isEinzelbetreuung(int $clubId): bool
     {
         $club = $this->find($clubId);
         return $club && $club['max_teilnehmer'] >= 6 && $club['max_teilnehmer'] <= 11;
@@ -106,7 +108,7 @@ class ClubModel extends Model
     /**
      * Prüft ob die Teilnehmerzahl gültig ist (mindestens 6)
      */
-    public function hasValidTeilnehmerzahl($clubId): bool
+    public function hasValidTeilnehmerzahl(int $clubId): bool
     {
         $club = $this->find($clubId);
         return $club && $club['max_teilnehmer'] >= 6;
@@ -115,7 +117,7 @@ class ClubModel extends Model
     /**
      * Prüft ob die AG eine zweite Lehrkraft hat
      */
-    public function hasZweiteLehrkraft($clubId): bool
+    public function hasZweiteLehrkraft(int $clubId): bool
     {
         $club = $this->find($clubId);
         return $club && !empty($club['zweite_lehrkraft_name']);

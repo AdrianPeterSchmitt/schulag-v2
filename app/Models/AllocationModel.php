@@ -35,8 +35,10 @@ class AllocationModel extends Model
 
     /**
      * Get Student für eine Allocation
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getStudent($allocationId)
+    public function getStudent(int $allocationId): ?array
     {
         $allocation = $this->find($allocationId);
         if ($allocation) {
@@ -48,8 +50,10 @@ class AllocationModel extends Model
 
     /**
      * Get Offer für eine Allocation
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getOffer($allocationId)
+    public function getOffer(int $allocationId): ?array
     {
         $allocation = $this->find($allocationId);
         if ($allocation && $allocation['offer_id']) {
@@ -61,8 +65,10 @@ class AllocationModel extends Model
 
     /**
      * Get alle Allocations für ein Schuljahr
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getForSchoolyear($schoolyear)
+    public function getForSchoolyear(string $schoolyear): array
     {
         $offerModel = new ClubOfferModel();
         $offers = $offerModel->where('schoolyear', $schoolyear)->findAll();
@@ -79,8 +85,10 @@ class AllocationModel extends Model
 
     /**
      * Get alle zugewiesenen Allocations (ASSIGNED status)
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getAssigned($schoolyear = null)
+    public function getAssigned(?string $schoolyear = null): array
     {
         $query = $this->where('status', 'ASSIGNED');
         
@@ -99,8 +107,10 @@ class AllocationModel extends Model
 
     /**
      * Get REST_WAITLIST Allocations
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getRestWaitlist($schoolyear = null)
+    public function getRestWaitlist(?string $schoolyear = null): array
     {
         $query = $this->where('status', 'REST_WAITLIST');
         
@@ -114,7 +124,7 @@ class AllocationModel extends Model
     /**
      * Lösche alle Allocations für ein Schuljahr
      */
-    public function deleteForSchoolyear($schoolyear)
+    public function deleteForSchoolyear(string $schoolyear): bool
     {
         $offerModel = new ClubOfferModel();
         $offers = $offerModel->where('schoolyear', $schoolyear)->findAll();
@@ -127,5 +137,63 @@ class AllocationModel extends Model
         // Lösche auch REST_WAITLIST Einträge (haben offer_id = NULL)
         // Hier müssten wir anders filtern, z.B. über created_at oder separate Lösung
         return true;
+    }
+    
+    /**
+     * Get den neuesten Losverfahren-Run
+     * 
+     * @return array<string, mixed>|null
+     */
+    public function getLatestRun(): ?array
+    {
+        // Simuliert - wird später implementiert wenn Run-Tracking hinzugefügt wird
+        return null;
+    }
+    
+    /**
+     * Get Run mit allen Ergebnissen
+     * 
+     * @return array<string, mixed>|null
+     */
+    public function getRunWithResults(int $runId): ?array
+    {
+        // Simuliert - wird später implementiert wenn Run-Tracking hinzugefügt wird
+        return ['id' => $runId, 'results' => []];
+    }
+    
+    /**
+     * Get die letzten N Runs
+     * 
+     * @return array<int, array<string, mixed>>
+     */
+    public function getRecentRuns(int $limit = 10): array
+    {
+        // Simuliert - wird später implementiert wenn Run-Tracking hinzugefügt wird
+        return [];
+    }
+    
+    /**
+     * Get aktuelle Allocations für ein Schuljahr
+     * 
+     * @return array<int, array<string, mixed>>
+     */
+    public function getCurrentAllocations(string $schoolyear): array
+    {
+        return $this->getAssigned($schoolyear);
+    }
+    
+    /**
+     * Get Allocations für mehrere Schüler
+     * 
+     * @param array<int> $studentIds
+     * @return array<int, array<string, mixed>>
+     */
+    public function getAllocationsForStudents(array $studentIds): array
+    {
+        if (empty($studentIds)) {
+            return [];
+        }
+        
+        return $this->whereIn('student_id', $studentIds)->findAll();
     }
 }

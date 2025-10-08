@@ -46,7 +46,13 @@ class UserModel extends Model
     protected $beforeInsert = ['hashPassword'];
     protected $beforeUpdate = ['hashPassword'];
 
-    protected function hashPassword(array $data)
+    /**
+     * Hash Password vor Insert/Update
+     * 
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    protected function hashPassword(array $data): array
     {
         if (isset($data['data']['password'])) {
             $data['data']['password'] = password_hash($data['data']['password'], PASSWORD_DEFAULT);
@@ -54,13 +60,13 @@ class UserModel extends Model
         return $data;
     }
 
-    public function isCoordinator($userId): bool
+    public function isCoordinator(int $userId): bool
     {
         $user = $this->find($userId);
         return $user && $user['role'] === 'COORDINATOR';
     }
 
-    public function isTeacher($userId): bool
+    public function isTeacher(int $userId): bool
     {
         $user = $this->find($userId);
         return $user && $user['role'] === 'TEACHER';

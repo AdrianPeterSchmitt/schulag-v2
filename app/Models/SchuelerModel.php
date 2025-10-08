@@ -36,8 +36,10 @@ class SchuelerModel extends Model
 
     /**
      * Get Klasse für einen Schüler
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getKlasse($schuelerId)
+    public function getKlasse(int $schuelerId): ?array
     {
         $schueler = $this->find($schuelerId);
         if ($schueler) {
@@ -49,8 +51,10 @@ class SchuelerModel extends Model
 
     /**
      * Get alle Choices für einen Schüler
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getChoices($schuelerId)
+    public function getChoices(int $schuelerId): array
     {
         $choiceModel = new ChoiceModel();
         return $choiceModel->where('student_id', $schuelerId)->findAll();
@@ -58,8 +62,10 @@ class SchuelerModel extends Model
 
     /**
      * Get alle Allocations für einen Schüler
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getAllocations($schuelerId)
+    public function getAllocations(int $schuelerId): array
     {
         $allocationModel = new AllocationModel();
         return $allocationModel->where('student_id', $schuelerId)->findAll();
@@ -67,8 +73,10 @@ class SchuelerModel extends Model
 
     /**
      * Get die aktive Zuteilung eines Schülers
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getAllocation($schuelerId)
+    public function getAllocation(int $schuelerId): ?array
     {
         $allocationModel = new AllocationModel();
         return $allocationModel
@@ -79,13 +87,23 @@ class SchuelerModel extends Model
 
     /**
      * Get Schüler mit Klasse
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getWithKlasse($schuelerId)
+    public function getWithKlasse(int $schuelerId): ?array
     {
         $schueler = $this->find($schuelerId);
         if ($schueler) {
             $schueler['klasse'] = $this->getKlasse($schuelerId);
         }
         return $schueler;
+    }
+    
+    /**
+     * Get Gesamtanzahl aller Schüler
+     */
+    public function countAll(): int
+    {
+        return $this->countAllResults();
     }
 }

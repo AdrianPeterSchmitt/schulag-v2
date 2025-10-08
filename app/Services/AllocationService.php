@@ -43,13 +43,12 @@ class AllocationService
                            ->countAllResults();
 
         // Zähle alle verfügbaren AG-Plätze
-        $totalCapacity = $this->offerModel
+        $result = $this->offerModel
             ->selectSum('capacity')
             ->where('schoolyear', $schoolyear)
             ->where('active', 1)
-            ->get()
-            ->getRow()
-            ->capacity ?? 0;
+            ->first();
+        $totalCapacity = $result['capacity'] ?? 0;
 
         $shortage = max(0, $totalStudents - $totalCapacity);
 
@@ -99,7 +98,7 @@ class AllocationService
             // Sammle alle Wahlen nach Priorität (ohne "no_participation")
             $choices = $this->choiceModel
                 ->whereIn('offer_id', $offerIds)
-                ->whereNotNull('offer_id')
+                ->where('offer_id IS NOT NULL')
                 ->findAll();
 
             // Gruppiere nach Priorität
@@ -202,15 +201,6 @@ class AllocationService
     }
 
     /**
-     * Führe einen manuellen Tausch durch
-     */
-    public function performSwap(int $studentAId, int $studentBId, int $offerAId, int $offerBId, ?int $createdBy = null): bool
-    {
-        $manualSwapModel = new \App\Models\ManualSwapModel();
-        return (bool)$manualSwapModel->performSwap($studentAId, $studentBId, $offerAId, $offerBId, $createdBy);
-    }
-
-    /**
      * Get Statistiken für ein Schuljahr
      * 
      * @return array<string, mixed>
@@ -246,5 +236,45 @@ class AllocationService
             ->countAllResults();
 
         return $stats;
+    }
+    
+    /**
+     * Führe einen manuellen Tausch zwischen zwei Schülern durch
+     * 
+     * @return array<string, mixed>
+     */
+    public function performSwap(int $student1Id, int $student2Id, int $offer1Id, int $offer2Id, ?int $createdBy = null): array
+    {
+        $db = \Config\Database::connect();
+        $db->transStart();
+        
+        try {
+            // Verwende das ManualSwapModel
+            $manualSwapModel = new \App\Models\ManualSwapModel();
+            $swapId = $manualSwapModel->performSwap($student1Id, $student2Id, $offer1Id, $offer2Id, $createdBy);
+            
+            if ($swapId === false) {
+                $db->transRollback();
+                return [
+                    'success' => false,
+                    'error' => 'Tausch konnte nicht durchgeführt werden'
+                ];
+            }
+            
+            $db->transComplete();
+            
+            return [
+                'success' => true,
+                'swap_id' => $swapId
+            ];
+            
+        } catch (\Exception $e) {
+            $db->transRollback();
+            log_message('error', 'Swap Error: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => 'Fehler beim Tausch: ' . $e->getMessage()
+            ];
+        }
     }
 }

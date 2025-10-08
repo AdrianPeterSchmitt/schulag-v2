@@ -39,8 +39,10 @@ class ManualSwapModel extends Model
 
     /**
      * Erstelle einen Swap und führe ihn durch
+     * 
+     * @return int|bool
      */
-    public function performSwap($studentAId, $studentBId, $offerAId, $offerBId, $createdBy = null)
+    public function performSwap(int $studentAId, int $studentBId, int $offerAId, int $offerBId, ?int $createdBy = null)
     {
         $db = \Config\Database::connect();
         $db->transStart();
@@ -83,8 +85,10 @@ class ManualSwapModel extends Model
 
     /**
      * Get alle Swaps für ein Schuljahr
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getForSchoolyear($schoolyear)
+    public function getForSchoolyear(string $schoolyear): array
     {
         $offerModel = new ClubOfferModel();
         $offers = $offerModel->where('schoolyear', $schoolyear)->findAll();

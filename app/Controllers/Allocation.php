@@ -248,9 +248,9 @@ class Allocation extends BaseController
     /**
      * Tausch zwischen zwei Schülern durchführen (HTMX)
      * 
-     * @return string
+     * @return \CodeIgniter\HTTP\ResponseInterface
      */
-    public function performSwap(): string
+    public function performSwap(): \CodeIgniter\HTTP\ResponseInterface
     {
         $student1Id = $this->request->getPost('student1_id');
         $student2Id = $this->request->getPost('student2_id');
@@ -263,30 +263,58 @@ class Allocation extends BaseController
         }
 
         try {
-            $result = $this->allocationService->performSwap($student1Id, $student2Id);
+            // Hole die aktuellen Allocations für beide Schüler
+            $allocation1 = $this->allocationModel->where('student_id', $student1Id)
+                ->where('status', 'ASSIGNED')
+                ->first();
+            $allocation2 = $this->allocationModel->where('student_id', $student2Id)
+                ->where('status', 'ASSIGNED')
+                ->first();
+                
+            if (!$allocation1 || !$allocation2) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Einer oder beide Schüler haben keine Zuteilung'
+                ]);
+            }
             
-            if ($result['success']) {
+            $result = $this->allocationService->performSwap(
+                $student1Id, 
+                $student2Id, 
+                $allocation1['offer_id'], 
+                $allocation2['offer_id'],
+                session()->get('user')['id'] ?? null
+            );
+            
+            if (isset($result['success']) && $result['success']) {
                 // Aktualisierte Zuteilungen zurückgeben
                 $updatedAllocations = $this->allocationModel->getAllocationsForStudents([$student1Id, $student2Id]);
                 
-                return view('allocation/partials/swap_result', [
+                $html = view('allocation/partials/swap_result', [
                     'success' => true,
                     'message' => 'Tausch erfolgreich durchgeführt!',
                     'allocations' => $updatedAllocations
                 ]);
+                
+                return $this->response->setBody($html);
             } else {
-                return view('allocation/partials/swap_result', [
+                $errorMessage = isset($result['error']) ? $result['error'] : 'Unbekannter Fehler';
+                $html = view('allocation/partials/swap_result', [
                     'success' => false,
-                    'message' => $result['error']
+                    'message' => $errorMessage
                 ]);
+                
+                return $this->response->setBody($html);
             }
 
         } catch (\Exception $e) {
             log_message('error', 'Swap error: ' . $e->getMessage());
-            return view('allocation/partials/swap_result', [
+            $html = view('allocation/partials/swap_result', [
                 'success' => false,
                 'message' => 'Unerwarteter Fehler beim Tausch'
             ]);
+            
+            return $this->response->setBody($html);
         }
     }
 

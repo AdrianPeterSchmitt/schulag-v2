@@ -36,8 +36,10 @@ class ChoiceModel extends Model
 
     /**
      * Get Student für eine Choice
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getStudent($choiceId)
+    public function getStudent(int $choiceId): ?array
     {
         $choice = $this->find($choiceId);
         if ($choice) {
@@ -49,8 +51,10 @@ class ChoiceModel extends Model
 
     /**
      * Get Offer für eine Choice
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getOffer($choiceId)
+    public function getOffer(int $choiceId): ?array
     {
         $choice = $this->find($choiceId);
         if ($choice && $choice['offer_id']) {
@@ -62,8 +66,10 @@ class ChoiceModel extends Model
 
     /**
      * Get alle Choices für ein Schuljahr
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getForSchoolyear($schoolyear)
+    public function getForSchoolyear(string $schoolyear): array
     {
         $offerModel = new ClubOfferModel();
         $offers = $offerModel->where('schoolyear', $schoolyear)->findAll();
@@ -79,8 +85,10 @@ class ChoiceModel extends Model
     /**
      * Speichere Choices für einen Schüler
      * Löscht vorhandene Wahlen und speichert neue
+     * 
+     * @param array<string, mixed> $choices
      */
-    public function saveChoicesForStudent($studentId, $choices, $createdBy = null)
+    public function saveChoicesForStudent(int $studentId, array $choices, ?int $createdBy = null): bool
     {
         $db = \Config\Database::connect();
         $builder = $db->table($this->table);

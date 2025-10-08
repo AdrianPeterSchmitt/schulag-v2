@@ -38,8 +38,10 @@ class ClubOfferModel extends Model
 
     /**
      * Get Club für ein Offer
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getClub($offerId)
+    public function getClub(int $offerId): ?array
     {
         $offer = $this->find($offerId);
         if ($offer) {
@@ -51,8 +53,10 @@ class ClubOfferModel extends Model
 
     /**
      * Get alle Choices für ein Offer
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getChoices($offerId)
+    public function getChoices(int $offerId): array
     {
         $choiceModel = new ChoiceModel();
         return $choiceModel->where('offer_id', $offerId)->findAll();
@@ -60,8 +64,10 @@ class ClubOfferModel extends Model
 
     /**
      * Get alle Allocations für ein Offer
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getAllocations($offerId)
+    public function getAllocations(int $offerId): array
     {
         $allocationModel = new AllocationModel();
         return $allocationModel->where('offer_id', $offerId)->findAll();
@@ -70,7 +76,7 @@ class ClubOfferModel extends Model
     /**
      * Zählt zugewiesene Schüler
      */
-    public function assignedCount($offerId): int
+    public function assignedCount(int $offerId): int
     {
         $allocationModel = new AllocationModel();
         return $allocationModel
@@ -82,7 +88,7 @@ class ClubOfferModel extends Model
     /**
      * Prüft ob noch Plätze frei sind
      */
-    public function hasSpace($offerId): bool
+    public function hasSpace(int $offerId): bool
     {
         $offer = $this->find($offerId);
         if (!$offer) {
@@ -94,8 +100,10 @@ class ClubOfferModel extends Model
 
     /**
      * Get alle aktiven Offers für ein Schuljahr mit Club-Informationen
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getActiveOffers($schoolyear)
+    public function getActiveOffers(string $schoolyear): array
     {
         $offers = $this->where('schoolyear', $schoolyear)
                        ->where('active', 1)
@@ -111,8 +119,10 @@ class ClubOfferModel extends Model
 
     /**
      * Get Offer mit Club-Informationen
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getWithClub($offerId)
+    public function getWithClub(int $offerId): ?array
     {
         $offer = $this->find($offerId);
         if ($offer) {

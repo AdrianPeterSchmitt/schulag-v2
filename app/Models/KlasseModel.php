@@ -35,8 +35,10 @@ class KlasseModel extends Model
 
     /**
      * Get all Schüler für eine Klasse
+     * 
+     * @return array<int, array<string, mixed>>
      */
-    public function getSchueler($klasseId)
+    public function getSchueler(int $klasseId): array
     {
         $schuelerModel = new SchuelerModel();
         return $schuelerModel->where('klasse_id', $klasseId)->findAll();
@@ -45,7 +47,7 @@ class KlasseModel extends Model
     /**
      * Prüft ob alle Schüler der Klasse ihre Wahlen abgegeben haben
      */
-    public function isChoicesComplete($klasseId): bool
+    public function isChoicesComplete(int $klasseId): bool
     {
         $schueler = $this->getSchueler($klasseId);
         
@@ -88,13 +90,34 @@ class KlasseModel extends Model
 
     /**
      * Get Klasse mit allen Schülern
+     * 
+     * @return array<string, mixed>|null
      */
-    public function getWithSchueler($klasseId)
+    public function getWithSchueler(int $klasseId): ?array
     {
         $klasse = $this->find($klasseId);
         if ($klasse) {
             $klasse['schueler'] = $this->getSchueler($klasseId);
         }
         return $klasse;
+    }
+    
+    /**
+     * Get Klassen mit unvollständigen Wahlen
+     * 
+     * @return array<int, array<string, mixed>>
+     */
+    public function getClassesWithIncompleteChoices(): array
+    {
+        $klassen = $this->findAll();
+        $incomplete = [];
+        
+        foreach ($klassen as $klasse) {
+            if (!$this->isChoicesComplete($klasse['id'])) {
+                $incomplete[] = $klasse;
+            }
+        }
+        
+        return $incomplete;
     }
 }
