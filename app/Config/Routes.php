@@ -26,9 +26,10 @@ $routes->group('admin', ['filter' => 'auth:admin'], function($routes) {
     $routes->delete('klassen/(:num)', 'Admin::deleteKlasse/$1');
     $routes->get('klassen/(:num)', 'Admin::showKlasse/$1');
     
-    // Schüler
-    $routes->post('schueler/create', 'Admin::createSchueler');
-    $routes->delete('schueler/(:num)', 'Admin::deleteSchueler/$1');
+    // Schüler (nested unter Klassen)
+    $routes->post('klassen/(:num)/schueler', 'Admin::createSchueler/$1');
+    $routes->put('klassen/(:num)/schueler/(:num)', 'Admin::updateSchueler/$1/$2');
+    $routes->delete('klassen/(:num)/schueler/(:num)', 'Admin::deleteSchueler/$1/$2');
     
     // AGs
     $routes->get('clubs', 'Admin::clubs');

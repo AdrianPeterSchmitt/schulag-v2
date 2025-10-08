@@ -2,7 +2,8 @@
 
 <?= $this->section('content') ?>
 
-<div class="fade-in">
+<div class="fade-in" 
+     x-data="{ showModal: false }">
     <!-- Header -->
     <div class="mb-8 flex justify-between items-center">
         <div>
@@ -116,16 +117,26 @@
                         </div>
 
                         <!-- Actions -->
-                        <button hx-delete="<?= base_url('admin/klassen/' . $klasse['id'] . '/schueler/' . $schueler['id']) ?>"
-                                hx-target="#schueler-list"
-                                hx-swap="innerHTML"
-                                hx-confirm="Schüler '<?= esc($schueler['name']) ?>' wirklich löschen?"
-                                class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition flex items-center space-x-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                            </svg>
-                            <span>Löschen</span>
-                        </button>
+                        <div class="flex items-center space-x-2">
+                            <button type="button"
+                                    class="edit-btn px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition flex items-center space-x-2"
+                                    data-schueler='<?= json_encode(['id' => $schueler['id'], 'name' => $schueler['name'], 'typ_gl' => $schueler['typ_gl']]) ?>'>
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                <span>Bearbeiten</span>
+                            </button>
+                            <button hx-delete="<?= base_url('admin/klassen/' . $klasse['id'] . '/schueler/' . $schueler['id']) ?>"
+                                    hx-target="#schueler-list"
+                                    hx-swap="innerHTML"
+                                    hx-confirm="Schüler '<?= esc($schueler['name']) ?>' wirklich löschen?"
+                                    class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition flex items-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                <span>Löschen</span>
+                            </button>
+                        </div>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -134,8 +145,7 @@
 </div>
 
 <!-- Modal: Neuer Schüler -->
-<div x-data="{ showModal: false }" 
-     x-show="showModal" 
+<div x-show="showModal" 
      x-cloak
      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
      @click.self="showModal = false">
@@ -157,7 +167,7 @@
         <form hx-post="<?= base_url('admin/klassen/' . $klasse['id'] . '/schueler') ?>"
               hx-target="#schueler-list"
               hx-swap="innerHTML"
-              @htmx:after-request="showModal = false"
+              @htmx:after-request="if(event.detail.successful) showModal = false"
               class="p-6 space-y-4">
             
             <div>
@@ -190,6 +200,70 @@
                 <button type="submit"
                         class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
                     Speichern
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Schüler bearbeiten (Alpine Store) -->
+<div x-show="$store.editModal.show" 
+     x-cloak
+     class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+     @click.self="$store.editModal.close()">
+    
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all"
+         @click.stop>
+        
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <h3 class="text-xl font-bold text-gray-900">Schüler bearbeiten</h3>
+            <button @click="$store.editModal.close()" class="text-gray-400 hover:text-gray-600 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <form x-show="$store.editModal.schueler"
+              :hx-put="`<?= base_url('admin/klassen/' . $klasse['id'] . '/schueler/') ?>${$store.editModal.schueler?.id}`"
+              hx-target="#schueler-list"
+              hx-swap="innerHTML"
+              @htmx:after-request="if(event.detail.successful) $store.editModal.close()"
+              class="p-6 space-y-4">
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                <input type="text" 
+                       name="name" 
+                       required
+                       :value="$store.editModal.schueler?.name"
+                       placeholder="z.B. Max Mustermann"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Typ (G/LE)</label>
+                <select name="typ_gl" 
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                    <option value="">Bitte wählen...</option>
+                    <option value="G" :selected="$store.editModal.schueler?.typ_gl === 'G'">G (Geistige Entwicklung)</option>
+                    <option value="LE" :selected="$store.editModal.schueler?.typ_gl === 'LE'">LE (Lernen)</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex space-x-3 pt-4">
+                <button type="button" 
+                        @click="$store.editModal.close()"
+                        class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                    Abbrechen
+                </button>
+                <button type="submit"
+                        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                    Aktualisieren
                 </button>
             </div>
         </form>

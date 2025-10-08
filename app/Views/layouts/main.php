@@ -14,6 +14,26 @@
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    <!-- Global Alpine Store -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('editModal', {
+                show: false,
+                schueler: null,
+                
+                open(data) {
+                    this.schueler = data;
+                    this.show = true;
+                },
+                
+                close() {
+                    this.show = false;
+                    this.schueler = null;
+                }
+            });
+        });
+    </script>
+    
     <!-- Custom Tailwind Config -->
     <script>
         tailwind.config = {
@@ -190,7 +210,27 @@
             if (successMsg) {
                 showToast('Erfolg', successMsg, '✅');
             }
+            
+            // Re-attach edit button listeners nach HTMX-Swap
+            attachEditButtonListeners();
         });
+        
+        // Event-Listener für Edit-Buttons (für dynamisch geladene Buttons)
+        function attachEditButtonListeners() {
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const data = JSON.parse(this.getAttribute('data-schueler'));
+                    
+                    // Trigger Alpine Store direkt
+                    if (window.Alpine && window.Alpine.store) {
+                        window.Alpine.store('editModal').open(data);
+                    }
+                });
+            });
+        }
+        
+        // Initial attachment beim Laden
+        document.addEventListener('DOMContentLoaded', attachEditButtonListeners);
     </script>
 </body>
 </html>

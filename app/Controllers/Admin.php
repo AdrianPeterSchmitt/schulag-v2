@@ -23,6 +23,58 @@ class Admin extends BaseController
     }
 
     /**
+     * Generiere HTML für Schüler-Liste (Helper)
+     * 
+     * @param array<string, mixed> $klasse
+     * @param int $klasseId
+     * @return string
+     */
+    private function generateSchuelerListHTML(array $klasse, int $klasseId): string
+    {
+        $html = '';
+        foreach ($klasse['schueler'] as $schueler) {
+            $html .= '<div class="p-6 hover:bg-gray-50 transition flex items-center justify-between">';
+            $html .= '  <div class="flex items-center space-x-4">';
+            $html .= '    <div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold">';
+            $html .= '      ' . esc(substr($schueler['name'], 0, 2)) . '';
+            $html .= '    </div>';
+            $html .= '    <div>';
+            $html .= '      <h3 class="text-lg font-semibold text-gray-900">' . esc($schueler['name']) . '</h3>';
+            $html .= '      <div class="flex items-center space-x-3 text-sm text-gray-600">';
+            $html .= '        <span class="flex items-center space-x-1">';
+            $html .= '          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
+            $html .= '            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>';
+            $html .= '          </svg>';
+            $html .= '          <span>' . esc($schueler['typ_gl']) . '</span>';
+            $html .= '        </span>';
+            $html .= '      </div>';
+            $html .= '    </div>';
+            $html .= '  </div>';
+            $html .= '  <div class="flex items-center space-x-2">';
+            $html .= '    <button type="button"';
+            $html .= '            class="edit-btn px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition flex items-center space-x-2"';
+            $html .= '            data-schueler=\'' . json_encode(['id' => $schueler['id'], 'name' => $schueler['name'], 'typ_gl' => $schueler['typ_gl']]) . '\'>';
+            $html .= '      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
+            $html .= '        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>';
+            $html .= '      </svg>';
+            $html .= '      <span>Bearbeiten</span>';
+            $html .= '    </button>';
+            $html .= '    <button hx-delete="' . base_url('admin/klassen/' . $klasseId . '/schueler/' . $schueler['id']) . '"';
+            $html .= '            hx-target="#schueler-list" hx-swap="innerHTML"';
+            $html .= '            hx-confirm="Schüler \'' . addslashes(esc($schueler['name'])) . '\' wirklich löschen?"';
+            $html .= '            class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition flex items-center space-x-2">';
+            $html .= '      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
+            $html .= '        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>';
+            $html .= '      </svg>';
+            $html .= '      <span>Löschen</span>';
+            $html .= '    </button>';
+            $html .= '  </div>';
+            $html .= '</div>';
+        }
+        return $html;
+    }
+
+    /**
      * Admin Dashboard - Übersicht
      * 
      * @return string
@@ -206,32 +258,37 @@ class Admin extends BaseController
             // Lade aktualisierte Schüler-Liste
             $klasse = $this->klasseModel->getWithSchueler($klasseId);
             
-            // Erstelle HTML für die Schüler-Liste
-            $html = '';
-            foreach ($klasse['schueler'] as $schueler) {
-                $html .= '<div class="p-6 hover:bg-gray-50 transition flex items-center justify-between">';
-                $html .= '  <div class="flex items-center space-x-4">';
-                $html .= '    <div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold">';
-                $html .= '      ' . esc(substr($schueler['name'], 0, 2)) . '';
-                $html .= '    </div>';
-                $html .= '    <div>';
-                $html .= '      <h3 class="text-lg font-semibold text-gray-900">' . esc($schueler['name']) . '</h3>';
-                $html .= '      <div class="flex items-center space-x-3 text-sm text-gray-600">';
-                $html .= '        <span>' . esc($schueler['typ_gl']) . '</span>';
-                $html .= '      </div>';
-                $html .= '    </div>';
-                $html .= '  </div>';
-                $html .= '  <button hx-delete="' . base_url('admin/klassen/' . $klasseId . '/schueler/' . $schueler['id']) . '"';
-                $html .= '          hx-target="#schueler-list" hx-swap="innerHTML"';
-                $html .= '          hx-confirm="Schüler \'' . esc($schueler['name']) . '\' wirklich löschen?"';
-                $html .= '          class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition flex items-center space-x-2">';
-                $html .= '    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">';
-                $html .= '      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>';
-                $html .= '    </svg>';
-                $html .= '    <span>Löschen</span>';
-                $html .= '  </button>';
-                $html .= '</div>';
-            }
+            // Generiere HTML
+            $html = $this->generateSchuelerListHTML($klasse, $klasseId);
+            
+            return $this->response->setBody($html);
+        } catch (\Exception $e) {
+            return $this->response->setStatusCode(500)->setBody('Fehler: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Schüler bearbeiten
+     * 
+     * @param int $klasseId
+     * @param int $schuelerId
+     * @return \CodeIgniter\HTTP\ResponseInterface
+     */
+    public function updateSchueler(int $klasseId, int $schuelerId): \CodeIgniter\HTTP\ResponseInterface
+    {
+        try {
+            $data = [
+                'name' => $this->request->getPost('name'),
+                'typ_gl' => $this->request->getPost('typ_gl'),
+            ];
+            
+            $this->schuelerModel->update($schuelerId, $data);
+            
+            // Lade aktualisierte Schüler-Liste
+            $klasse = $this->klasseModel->getWithSchueler($klasseId);
+            
+            // Generiere HTML
+            $html = $this->generateSchuelerListHTML($klasse, $klasseId);
             
             return $this->response->setBody($html);
         } catch (\Exception $e) {
