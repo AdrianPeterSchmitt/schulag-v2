@@ -56,7 +56,7 @@ class Filters extends BaseFilters
         ],
         'after' => [
             'performance', // Performance Metrics
-            'toolbar',     // Debug Toolbar
+            // Debug Toolbar komplett aus in Burn-in
         ],
     ];
 
