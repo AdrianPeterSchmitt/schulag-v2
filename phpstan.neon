@@ -1,0 +1,18 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 6
+    paths:
+        - app/Controllers
+        - app/Models
+        - app/Services
+    
+    # CodeIgniter 4 spezifisch
+    excludePaths:
+        - app/Config/*
+        - app/Views/*
+    
+    # Bootstrap für CodeIgniter Helper-Funktionen
+    bootstrapFiles:
+        - phpstan-bootstrap.php
