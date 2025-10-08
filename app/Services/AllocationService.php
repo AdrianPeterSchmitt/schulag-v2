@@ -9,10 +9,10 @@ use App\Models\SchuelerModel;
 
 class AllocationService
 {
-    protected $allocationModel;
-    protected $choiceModel;
-    protected $offerModel;
-    protected $schuelerModel;
+    protected AllocationModel $allocationModel;
+    protected ChoiceModel $choiceModel;
+    protected ClubOfferModel $offerModel;
+    protected SchuelerModel $schuelerModel;
 
     public function __construct()
     {
@@ -24,6 +24,8 @@ class AllocationService
 
     /**
      * Prüft ob genug AG-Plätze für alle teilnehmenden Schüler vorhanden sind
+     * 
+     * @return array<string, mixed>
      */
     public function checkCapacity(string $schoolyear): array
     {
@@ -61,6 +63,8 @@ class AllocationService
 
     /**
      * Führt das Losverfahren für ein Schuljahr durch
+     * 
+     * @return array<string, mixed>
      */
     public function runLottery(string $schoolyear): array
     {
@@ -200,7 +204,7 @@ class AllocationService
     /**
      * Führe einen manuellen Tausch durch
      */
-    public function performSwap($studentAId, $studentBId, $offerAId, $offerBId, $createdBy = null): bool
+    public function performSwap(int $studentAId, int $studentBId, int $offerAId, int $offerBId, ?int $createdBy = null): bool
     {
         $manualSwapModel = new \App\Models\ManualSwapModel();
         return (bool)$manualSwapModel->performSwap($studentAId, $studentBId, $offerAId, $offerBId, $createdBy);
@@ -208,8 +212,10 @@ class AllocationService
 
     /**
      * Get Statistiken für ein Schuljahr
+     * 
+     * @return array<string, mixed>
      */
-    public function getStatistics($schoolyear): array
+    public function getStatistics(string $schoolyear): array
     {
         $offers = $this->offerModel->getActiveOffers($schoolyear);
         

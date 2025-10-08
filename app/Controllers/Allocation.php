@@ -12,13 +12,13 @@ use App\Services\AllocationService;
 
 class Allocation extends BaseController
 {
-    protected $allocationModel;
-    protected $klasseModel;
-    protected $schuelerModel;
-    protected $clubModel;
-    protected $offerModel;
-    protected $choiceModel;
-    protected $allocationService;
+    protected AllocationModel $allocationModel;
+    protected KlasseModel $klasseModel;
+    protected SchuelerModel $schuelerModel;
+    protected ClubModel $clubModel;
+    protected ClubOfferModel $offerModel;
+    protected ChoiceModel $choiceModel;
+    protected AllocationService $allocationService;
 
     public function __construct()
     {
@@ -33,8 +33,10 @@ class Allocation extends BaseController
 
     /**
      * Allocation Dashboard - Übersicht über das Losverfahren
+     * 
+     * @return string
      */
-    public function index()
+    public function index(): string
     {
         $schoolyear = '2024/2025'; // TODO: Aus Config holen
         
@@ -99,6 +101,8 @@ class Allocation extends BaseController
 
     /**
      * Losverfahren ausführen
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface
      */
     public function run()
     {
@@ -160,6 +164,8 @@ class Allocation extends BaseController
 
     /**
      * Ergebnisse anzeigen
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
      */
     public function results()
     {
@@ -207,8 +213,10 @@ class Allocation extends BaseController
 
     /**
      * Manuelle Tausche verwalten
+     * 
+     * @return string
      */
-    public function swaps()
+    public function swaps(): string
     {
         $schoolyear = '2024/2025';
         
@@ -239,8 +247,10 @@ class Allocation extends BaseController
 
     /**
      * Tausch zwischen zwei Schülern durchführen (HTMX)
+     * 
+     * @return string
      */
-    public function performSwap()
+    public function performSwap(): string
     {
         $student1Id = $this->request->getPost('student1_id');
         $student2Id = $this->request->getPost('student2_id');
@@ -282,8 +292,10 @@ class Allocation extends BaseController
 
     /**
      * Export-Funktionen
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse|\CodeIgniter\HTTP\ResponseInterface
      */
-    public function export($format = 'pdf')
+    public function export(string $format = 'pdf')
     {
         $schoolyear = '2024/2025';
         $runId = $this->request->getGet('run_id');
@@ -310,8 +322,11 @@ class Allocation extends BaseController
 
     /**
      * PDF Export
+     * 
+     * @param array<string, mixed> $run
+     * @return \CodeIgniter\HTTP\ResponseInterface
      */
-    private function exportPDF($run)
+    private function exportPDF(array $run)
     {
         // TODO: PDF Export implementieren
         return $this->response->setJSON([
@@ -322,8 +337,11 @@ class Allocation extends BaseController
 
     /**
      * Excel Export
+     * 
+     * @param array<string, mixed> $run
+     * @return \CodeIgniter\HTTP\ResponseInterface
      */
-    private function exportExcel($run)
+    private function exportExcel(array $run)
     {
         // TODO: Excel Export implementieren
         return $this->response->setJSON([
@@ -334,8 +352,10 @@ class Allocation extends BaseController
 
     /**
      * Statistiken anzeigen
+     * 
+     * @return string
      */
-    public function statistics()
+    public function statistics(): string
     {
         $schoolyear = '2024/2025';
         $stats = $this->allocationService->getStatistics($schoolyear);

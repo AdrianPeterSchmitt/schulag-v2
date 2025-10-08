@@ -10,6 +10,9 @@ class Auth implements FilterInterface
 {
     /**
      * Prüft ob User eingeloggt ist
+     * 
+     * @param array<string>|null $arguments
+     * @return RequestInterface|ResponseInterface|string|null
      */
     public function before(RequestInterface $request, $arguments = null)
     {
@@ -31,10 +34,17 @@ class Auth implements FilterInterface
                 return redirect()->to('/')->with('error', 'Keine Berechtigung für diesen Bereich');
             }
         }
+        
+        return null;
     }
 
+    /**
+     * @param array<string>|null $arguments
+     * @return ResponseInterface|null
+     */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
         // Nichts zu tun
+        return null;
     }
 }

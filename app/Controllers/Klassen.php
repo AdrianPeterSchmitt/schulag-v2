@@ -10,11 +10,11 @@ use App\Models\ChoiceModel;
 
 class Klassen extends BaseController
 {
-    protected $klasseModel;
-    protected $schuelerModel;
-    protected $clubModel;
-    protected $offerModel;
-    protected $choiceModel;
+    protected KlasseModel $klasseModel;
+    protected SchuelerModel $schuelerModel;
+    protected ClubModel $clubModel;
+    protected ClubOfferModel $offerModel;
+    protected ChoiceModel $choiceModel;
 
     public function __construct()
     {
@@ -27,8 +27,10 @@ class Klassen extends BaseController
 
     /**
      * Klassenauswahl für Lehrer
+     * 
+     * @return string
      */
-    public function select()
+    public function select(): string
     {
         $klassen = $this->klasseModel->orderBy('jahrgang', 'ASC')->orderBy('name', 'ASC')->findAll();
         
@@ -48,8 +50,10 @@ class Klassen extends BaseController
 
     /**
      * Klasse mit Schülern und AG-Wahlen anzeigen
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
      */
-    public function show($klasseId)
+    public function show(int $klasseId)
     {
         $klasse = $this->klasseModel->getWithSchueler($klasseId);
         
@@ -108,8 +112,10 @@ class Klassen extends BaseController
 
     /**
      * AG-Wahlen für einen Schüler speichern (HTMX)
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface|string
      */
-    public function saveChoices($klasseId)
+    public function saveChoices(int $klasseId)
     {
         $studentId = $this->request->getPost('student_id');
         $choices = [
@@ -171,8 +177,10 @@ class Klassen extends BaseController
 
     /**
      * Prüfe ob alle Schüler der Klasse ihre Wahlen abgegeben haben
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface
      */
-    public function checkCompletion($klasseId)
+    public function checkCompletion(int $klasseId)
     {
         $isComplete = $this->klasseModel->isChoicesComplete($klasseId);
         

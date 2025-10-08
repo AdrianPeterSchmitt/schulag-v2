@@ -9,10 +9,10 @@ use App\Models\ClubOfferModel;
 
 class Admin extends BaseController
 {
-    protected $klasseModel;
-    protected $schuelerModel;
-    protected $clubModel;
-    protected $offerModel;
+    protected KlasseModel $klasseModel;
+    protected SchuelerModel $schuelerModel;
+    protected ClubModel $clubModel;
+    protected ClubOfferModel $offerModel;
 
     public function __construct()
     {
@@ -24,8 +24,10 @@ class Admin extends BaseController
 
     /**
      * Admin Dashboard - Übersicht
+     * 
+     * @return string
      */
-    public function index()
+    public function index(): string
     {
         $data = [
             'title' => 'Admin - Verwaltung',
@@ -39,8 +41,10 @@ class Admin extends BaseController
 
     /**
      * Klassen verwalten
+     * 
+     * @return string
      */
-    public function klassen()
+    public function klassen(): string
     {
         $data = [
             'title' => 'Klassen verwalten',
@@ -52,6 +56,8 @@ class Admin extends BaseController
 
     /**
      * Klasse erstellen (HTMX)
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface|string
      */
     public function createKlasse()
     {
@@ -88,8 +94,10 @@ class Admin extends BaseController
 
     /**
      * Klasse löschen (HTMX)
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface|string
      */
-    public function deleteKlasse($id)
+    public function deleteKlasse(int $id)
     {
         if ($this->klasseModel->delete($id)) {
             // Return updated list for HTMX
@@ -105,8 +113,10 @@ class Admin extends BaseController
 
     /**
      * Klasse Details anzeigen (für Schüler-Verwaltung)
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
      */
-    public function showKlasse($id)
+    public function showKlasse(int $id)
     {
         $klasse = $this->klasseModel->getWithSchueler($id);
         
@@ -124,6 +134,8 @@ class Admin extends BaseController
 
     /**
      * Schüler erstellen (HTMX)
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface
      */
     public function createSchueler(int $klasseId)
     {
@@ -183,6 +195,8 @@ class Admin extends BaseController
 
     /**
      * Schüler löschen (HTMX)
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface
      */
     public function deleteSchueler(int $klasseId, int $schuelerId)
     {
@@ -227,8 +241,10 @@ class Admin extends BaseController
 
     /**
      * AGs verwalten
+     * 
+     * @return string
      */
-    public function clubs()
+    public function clubs(): string
     {
         $clubs = $this->clubModel->findAll();
         
@@ -257,6 +273,8 @@ class Admin extends BaseController
 
     /**
      * AG erstellen (HTMX)
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface
      */
     public function createClub()
     {
@@ -315,8 +333,10 @@ class Admin extends BaseController
 
     /**
      * AG löschen (HTMX)
+     * 
+     * @return \CodeIgniter\HTTP\ResponseInterface|string
      */
-    public function deleteClub($id)
+    public function deleteClub(int $id)
     {
         if ($this->clubModel->delete($id)) {
             $clubs = $this->clubModel->findAll();

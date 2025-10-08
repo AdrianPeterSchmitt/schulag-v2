@@ -1,292 +1,70 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method App\\Controllers\\Admin\:\:clubs\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Call to an undefined method App\\Models\\SchuelerModel\:\:countAll\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Controllers/Admin.php
 
 		-
-			message: '#^Method App\\Controllers\\Admin\:\:createClub\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:createKlasse\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:createSchueler\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:deleteClub\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:deleteClub\(\) has parameter \$id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:deleteKlasse\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:deleteKlasse\(\) has parameter \$id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:deleteSchueler\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:index\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:klassen\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:showKlasse\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Admin\:\:showKlasse\(\) has parameter \$id with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Property App\\Controllers\\Admin\:\:\$clubModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Property App\\Controllers\\Admin\:\:\$klasseModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Property App\\Controllers\\Admin\:\:\$offerModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Property App\\Controllers\\Admin\:\:\$schuelerModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Admin.php
-
-		-
-			message: '#^Method App\\Controllers\\Allocation\:\:export\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Call to an undefined method App\\Models\\AllocationModel\:\:getAllocationsForStudents\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Controllers/Allocation.php
 
 		-
-			message: '#^Method App\\Controllers\\Allocation\:\:export\(\) has parameter \$format with no type specified\.$#'
-			identifier: missingType.parameter
+			message: '#^Call to an undefined method App\\Models\\AllocationModel\:\:getCurrentAllocations\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Controllers/Allocation.php
 
 		-
-			message: '#^Method App\\Controllers\\Allocation\:\:exportExcel\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Call to an undefined method App\\Models\\AllocationModel\:\:getLatestRun\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Controllers/Allocation.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\AllocationModel\:\:getRecentRuns\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Controllers/Allocation.php
 
 		-
-			message: '#^Method App\\Controllers\\Allocation\:\:exportExcel\(\) has parameter \$run with no type specified\.$#'
-			identifier: missingType.parameter
+			message: '#^Call to an undefined method App\\Models\\AllocationModel\:\:getRunWithResults\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: app/Controllers/Allocation.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\KlasseModel\:\:getClassesWithIncompleteChoices\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Controllers/Allocation.php
 
 		-
-			message: '#^Method App\\Controllers\\Allocation\:\:exportPDF\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Cannot access offset ''error'' on bool\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: app/Controllers/Allocation.php
 
 		-
-			message: '#^Method App\\Controllers\\Allocation\:\:exportPDF\(\) has parameter \$run with no type specified\.$#'
-			identifier: missingType.parameter
+			message: '#^Cannot access offset ''success'' on bool\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: app/Controllers/Allocation.php
 
 		-
-			message: '#^Method App\\Controllers\\Allocation\:\:index\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Method App\\Controllers\\Allocation\:\:performSwap\(\) should return string but returns CodeIgniter\\HTTP\\ResponseInterface\.$#'
+			identifier: return.type
 			count: 1
 			path: app/Controllers/Allocation.php
 
 		-
-			message: '#^Method App\\Controllers\\Allocation\:\:performSwap\(\) has no return type specified\.$#'
-			identifier: missingType.return
+			message: '#^Method App\\Services\\AllocationService\:\:performSwap\(\) invoked with 2 parameters, 4\-5 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Method App\\Controllers\\Allocation\:\:results\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Method App\\Controllers\\Allocation\:\:run\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Method App\\Controllers\\Allocation\:\:statistics\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Method App\\Controllers\\Allocation\:\:swaps\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Property App\\Controllers\\Allocation\:\:\$allocationModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Property App\\Controllers\\Allocation\:\:\$allocationService has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Property App\\Controllers\\Allocation\:\:\$choiceModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Property App\\Controllers\\Allocation\:\:\$clubModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Property App\\Controllers\\Allocation\:\:\$klasseModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Property App\\Controllers\\Allocation\:\:\$offerModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Property App\\Controllers\\Allocation\:\:\$schuelerModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Allocation.php
-
-		-
-			message: '#^Method App\\Controllers\\Klassen\:\:checkCompletion\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Method App\\Controllers\\Klassen\:\:checkCompletion\(\) has parameter \$klasseId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Method App\\Controllers\\Klassen\:\:saveChoices\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Method App\\Controllers\\Klassen\:\:saveChoices\(\) has parameter \$klasseId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Method App\\Controllers\\Klassen\:\:select\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Method App\\Controllers\\Klassen\:\:show\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Method App\\Controllers\\Klassen\:\:show\(\) has parameter \$klasseId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Property App\\Controllers\\Klassen\:\:\$choiceModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Property App\\Controllers\\Klassen\:\:\$clubModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Property App\\Controllers\\Klassen\:\:\$klasseModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Property App\\Controllers\\Klassen\:\:\$offerModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Klassen.php
-
-		-
-			message: '#^Property App\\Controllers\\Klassen\:\:\$schuelerModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Controllers/Klassen.php
 
 		-
 			message: '#^Method App\\Models\\AllocationModel\:\:deleteForSchoolyear\(\) has no return type specified\.$#'
@@ -703,79 +481,13 @@ parameters:
 			path: app/Models/UserModel.php
 
 		-
-			message: '#^Method App\\Services\\AllocationService\:\:checkCapacity\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
+			message: '#^Call to an undefined method App\\Models\\ChoiceModel\:\:whereNotNull\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Services/AllocationService.php
 
 		-
-			message: '#^Method App\\Services\\AllocationService\:\:getStatistics\(\) has parameter \$schoolyear with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Method App\\Services\\AllocationService\:\:getStatistics\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Method App\\Services\\AllocationService\:\:performSwap\(\) has parameter \$createdBy with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Method App\\Services\\AllocationService\:\:performSwap\(\) has parameter \$offerAId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Method App\\Services\\AllocationService\:\:performSwap\(\) has parameter \$offerBId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Method App\\Services\\AllocationService\:\:performSwap\(\) has parameter \$studentAId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Method App\\Services\\AllocationService\:\:performSwap\(\) has parameter \$studentBId with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Method App\\Services\\AllocationService\:\:runLottery\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Property App\\Services\\AllocationService\:\:\$allocationModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Property App\\Services\\AllocationService\:\:\$choiceModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Property App\\Services\\AllocationService\:\:\$offerModel has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: app/Services/AllocationService.php
-
-		-
-			message: '#^Property App\\Services\\AllocationService\:\:\$schuelerModel has no type specified\.$#'
-			identifier: missingType.property
+			message: '#^Call to an undefined method App\\Models\\ClubOfferModel\:\:get\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: app/Services/AllocationService.php
