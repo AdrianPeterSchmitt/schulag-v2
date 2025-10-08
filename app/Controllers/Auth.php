@@ -6,7 +6,7 @@ use App\Models\UserModel;
 
 class Auth extends BaseController
 {
-    protected $userModel;
+    protected UserModel $userModel;
 
     public function __construct()
     {
@@ -15,6 +15,8 @@ class Auth extends BaseController
 
     /**
      * Login-Seite anzeigen
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
      */
     public function login()
     {
@@ -28,6 +30,8 @@ class Auth extends BaseController
 
     /**
      * Login verarbeiten
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse
      */
     public function doLogin()
     {
@@ -82,6 +86,8 @@ class Auth extends BaseController
 
     /**
      * Logout
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse
      */
     public function logout()
     {
@@ -91,6 +97,8 @@ class Auth extends BaseController
 
     /**
      * Registrierung (nur für Admins)
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse|string
      */
     public function register()
     {
@@ -104,6 +112,8 @@ class Auth extends BaseController
 
     /**
      * Registrierung verarbeiten
+     * 
+     * @return \CodeIgniter\HTTP\RedirectResponse
      */
     public function doRegister()
     {

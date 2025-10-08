@@ -125,7 +125,7 @@ class Admin extends BaseController
     /**
      * Schüler erstellen (HTMX)
      */
-    public function createSchueler($klasseId)
+    public function createSchueler(int $klasseId)
     {
         $rules = [
             'name' => 'required|min_length[3]',
@@ -184,7 +184,7 @@ class Admin extends BaseController
     /**
      * Schüler löschen (HTMX)
      */
-    public function deleteSchueler($klasseId, $schuelerId)
+    public function deleteSchueler(int $klasseId, int $schuelerId)
     {
         try {
             $this->schuelerModel->delete($schuelerId);
@@ -300,11 +300,13 @@ class Admin extends BaseController
                 $club['offers'] = $this->offerModel->where('club_id', $club['id'])->findAll();
             }
             
-            return view('admin/clubs', [
+            $html = view('admin/clubs', [
                 'clubs' => $clubs,
                 'activeOffersCount' => $this->offerModel->where('active', 1)->countAllResults(),
                 'totalCapacity' => array_sum(array_column($this->offerModel->where('active', 1)->findAll(), 'capacity')),
-            ])->render();
+            ]);
+            
+            return $this->response->setBody($html);
 
         } catch (\Exception $e) {
             return $this->response->setStatusCode(500)->setBody('Fehler: ' . $e->getMessage());

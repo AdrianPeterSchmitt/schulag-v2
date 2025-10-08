@@ -35,6 +35,15 @@ if (!function_exists('esc')) {
     }
 }
 
+if (!function_exists('session')) {
+    /**
+     * @return \CodeIgniter\Session\Session
+     */
+    function session(?string $val = null) {
+        return new \CodeIgniter\Session\Session(new \Config\App());
+    }
+}
+
 if (!defined('ENVIRONMENT')) {
     define('ENVIRONMENT', 'development');
 }
