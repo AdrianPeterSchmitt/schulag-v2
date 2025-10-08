@@ -26,10 +26,11 @@ class Auth implements FilterInterface
         
         // Prüfe Rollen-Berechtigung
         if ($arguments) {
-            $userRole = $session->get('user_role');
+            $userRole = strtoupper((string) $session->get('user_role'));
             $allowedRoles = is_array($arguments) ? $arguments : [$arguments];
-            
-            if (!in_array($userRole, $allowedRoles)) {
+            $allowedRolesUpper = array_map('strtoupper', $allowedRoles);
+
+            if (!in_array($userRole, $allowedRolesUpper, true)) {
                 // Keine Berechtigung
                 return redirect()->to('/')->with('error', 'Keine Berechtigung für diesen Bereich');
             }
