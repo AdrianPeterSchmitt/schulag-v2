@@ -29,6 +29,11 @@
     </script>
     
     <style>
+        /* Alpine.js Cloak */
+        [x-cloak] {
+            display: none !important;
+        }
+        
         /* HTMX Loading Indicator */
         .htmx-indicator {
             display: none;
