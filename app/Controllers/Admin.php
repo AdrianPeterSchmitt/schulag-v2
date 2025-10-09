@@ -225,9 +225,9 @@ class Admin extends BaseController
     /**
      * Schüler löschen (HTMX)
      * 
-     * @return \CodeIgniter\HTTP\ResponseInterface
+     * @return string|\CodeIgniter\HTTP\ResponseInterface
      */
-    public function deleteSchueler(int $klasseId, int $schuelerId)
+    public function deleteSchueler(int $klasseId, int $schuelerId): string|\CodeIgniter\HTTP\ResponseInterface
     {
         try {
             $this->schuelerModel->delete($schuelerId);

@@ -31,8 +31,14 @@ class Auth implements FilterInterface
             $allowedRolesUpper = array_map('strtoupper', $allowedRoles);
 
             if (!in_array($userRole, $allowedRolesUpper, true)) {
-                // Keine Berechtigung
-                return redirect()->to('/')->with('error', 'Keine Berechtigung für diesen Bereich');
+                // Keine Berechtigung - redirect basierend auf Rolle
+                $targetPath = match ($userRole) {
+                    'ADMIN' => '/admin',
+                    'TEACHER' => '/klassen',
+                    'COORDINATOR' => '/allocation',
+                    default => '/login',
+                };
+                return redirect()->to($targetPath)->with('error', 'Keine Berechtigung für diesen Bereich');
             }
         }
         

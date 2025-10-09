@@ -22,7 +22,6 @@ class CreateUsersTable extends Migration
             'email' => [
                 'type' => 'VARCHAR',
                 'constraint' => 100,
-                'unique' => true,
             ],
             'password' => [
                 'type' => 'VARCHAR',
@@ -30,7 +29,7 @@ class CreateUsersTable extends Migration
             ],
             'role' => [
                 'type' => 'ENUM',
-                'constraint' => ['COORDINATOR', 'TEACHER'],
+                'constraint' => ['ADMIN', 'COORDINATOR', 'TEACHER'],
                 'default' => 'TEACHER',
             ],
             'remember_token' => [

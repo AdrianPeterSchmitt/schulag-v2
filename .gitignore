@@ -175,3 +175,12 @@ PHPSTAN-SUCCESS.md
 PRODUCTION-READINESS-REPORT.md
 TEST-RESULTS.md
 WAS-FEHLT-NOCH.md
+
+#-------------------------
+# Node.js / Playwright
+#-------------------------
+node_modules/
+package-lock.json
+playwright-report/
+test-results/
+playwright/.cache/

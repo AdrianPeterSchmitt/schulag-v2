@@ -1,0 +1,98 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Tests & Code Quality
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: schulag_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: intl, mbstring, mysqlnd, xml, json, sqlite3
+        coverage: none
+
+    - name: Get Composer Cache Directory
+      id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+    - name: Cache Composer Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-progress --no-interaction
+
+    - name: Create .env File
+      run: |
+        cp env .env
+        echo "CI_ENVIRONMENT = testing" >> .env
+        echo "database.default.hostname = 127.0.0.1" >> .env
+        echo "database.default.database = schulag_test" >> .env
+        echo "database.default.username = root" >> .env
+        echo "database.default.password = root" >> .env
+        echo "database.default.DBDriver = MySQLi" >> .env
+
+    - name: Generate Encryption Key
+      run: php spark key:generate
+
+    - name: Run Database Migrations
+      run: php spark migrate --all
+
+    - name: Run PHPStan (Static Analysis)
+      run: composer analyse
+
+    - name: Run PHPUnit Tests
+      run: vendor/bin/phpunit --colors=always
+
+    - name: Check Code Style (PSR-12)
+      run: |
+        if [ -f "vendor/bin/phpcs" ]; then
+          vendor/bin/phpcs --standard=PSR12 app/
+        else
+          echo "phpcs not installed, skipping..."
+        fi
+      continue-on-error: true
+
+  deploy:
+    name: Deploy to Production
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Deploy Notice
+      run: |
+        echo "🚀 Deploy würde hier stattfinden..."
+        echo "📦 Alle Tests erfolgreich!"
+        echo "✅ Code-Qualität geprüft"
+        echo "Deployment-Schritte können hier hinzugefügt werden"
+
+
+

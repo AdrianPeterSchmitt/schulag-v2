@@ -77,6 +77,7 @@ class Autoload extends AutoloadConfig
      */
     public $files = [
         APPPATH . 'Helpers/schulag_helper.php',
+        APPPATH . 'Helpers/debug_helper.php',
     ];
 
     /**

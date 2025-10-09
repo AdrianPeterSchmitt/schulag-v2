@@ -2,7 +2,7 @@
 
 <?= $this->section('content') ?>
 
-<div class="fade-in">
+<div class="fade-in" x-data="{ showNewModal: false, showEditModal: false, editClubId: null }">
     <!-- Header -->
     <div class="mb-8 flex justify-between items-center">
         <div>
@@ -11,7 +11,7 @@
         </div>
         
         <!-- Neue AG Button -->
-        <button @click="$dispatch('open-modal', {modal: 'newClubModal'})"
+        <button @click="showNewModal = true"
                 class="px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-purple-800 transition shadow-lg flex items-center space-x-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -168,45 +168,35 @@
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
-</div>
 
-<!-- Modal: Neue AG -->
-<template x-if="true">
-<div x-data="{ open: false }"
-     @open-modal.window="open = ($event.detail.modal === 'newClubModal')"
-     @close-modal.window="open = false"
-     x-show="open"
-     x-cloak
-     class="fixed inset-0 z-50 overflow-y-auto"
-     style="display: none;">
-    
-    <!-- Backdrop -->
-    <div class="fixed inset-0 bg-black/50 transition-opacity"
-         @click="open = false"></div>
-    
-    <!-- Modal -->
-    <div class="flex min-h-screen items-center justify-center p-4">
-        <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-8"
+    <!-- Modal: Neue AG (INNERHALB des x-data Scopes!) -->
+    <template x-if="showNewModal">
+    <div @click.self="showNewModal = false"
+         x-init="htmx.process($el)"
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 transform transition-all"
              @click.stop>
             
             <!-- Close Button -->
-            <button @click="open = false"
-                    class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+            <button @click="showNewModal = false"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
             
             <!-- Header -->
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Neue AG erstellen</h2>
+            <div class="px-8 pt-8 pb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Neue AG erstellen</h2>
+            </div>
             
             <!-- Form -->
-            <form x-init="htmx.process($el)"
-                  hx-post="<?= base_url('admin/clubs/create') ?>"
+            <form hx-post="<?= base_url('admin/clubs/create') ?>"
                   hx-target="#clubs-list"
                   hx-swap="innerHTML"
-                  @htmx:after-request="if(event.detail.successful) open = false"
-                  class="space-y-4">
+                  @htmx:after-request="if(event.detail.successful) showNewModal = false"
+                  class="px-8 pb-8 space-y-4">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="md:col-span-2">
@@ -265,7 +255,7 @@
                 
                 <div class="flex justify-end space-x-3 pt-4">
                     <button type="button"
-                            @click="open = false"
+                            @click="showNewModal = false; $el.closest('form').reset();"
                             class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
                         Abbrechen
                     </button>
@@ -277,42 +267,8 @@
             </form>
         </div>
     </div>
-</div>
-</template>
+    </template>
 
-<!-- Modal: AG bearbeiten -->
-<template x-if="true">
-<div x-data="{ open: false, clubId: null }"
-     @open-modal.window="if($event.detail.modal === 'editClubModal'){ open = true; clubId = $event.detail.id; }"
-     @close-modal.window="open = false"
-     x-show="open"
-     x-cloak
-     class="fixed inset-0 z-50 overflow-y-auto"
-     style="display: none;">
-    <div class="fixed inset-0 bg-black/50" @click="open = false"></div>
-    <div class="flex min-h-screen items-center justify-center p-4">
-        <div class="relative bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6" @click.stop>
-            <button @click="open = false" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <h2 class="text-xl font-bold text-gray-900 mb-4">AG bearbeiten</h2>
-            <form x-init="$nextTick(() => { if (clubId) { const meta = document.querySelector('meta[name=\'<?= csrf_header() ?>\']'); const token = meta ? meta.content : ''; $el.setAttribute('hx-put', '<?= base_url('admin/clubs/') ?>' + clubId); $el.setAttribute('hx-headers', JSON.stringify({'<?= csrf_header() ?>': token})); htmx.process($el); } })"
-                  hx-target="#clubs-list" hx-swap="innerHTML"
-                  @htmx:after-request="if(event.detail.successful) open = false"
-                  class="space-y-4">
-                <?= csrf_field() ?>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">AG-Titel *</label>
-                    <input type="text" name="titel" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                </div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button type="button" @click="open = false" class="px-4 py-2 border border-gray-300 rounded-lg">Abbrechen</button>
-                    <button type="submit" class="px-6 py-2 bg-purple-600 text-white rounded-lg">Speichern</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-</template>
+</div><!-- Schließt x-data Container -->
 
 <?= $this->endSection() ?>

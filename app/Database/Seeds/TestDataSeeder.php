@@ -15,7 +15,7 @@ class TestDataSeeder extends Seeder
                 'name' => 'Admin',
                 'email' => 'admin@schulag.test',
                 'password' => password_hash('admin123', PASSWORD_DEFAULT),
-                'role' => 'admin',
+                'role' => 'ADMIN',
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);

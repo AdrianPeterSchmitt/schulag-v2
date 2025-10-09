@@ -109,7 +109,7 @@ class Auth extends BaseController
     public function register()
     {
         // Nur für eingeloggte Admins
-        if (!session()->get('user_id') || session()->get('user_role') !== 'admin') {
+        if (!session()->get('user_id') || strtoupper((string) session()->get('user_role')) !== 'ADMIN') {
             return redirect()->to('/login');
         }
 
@@ -124,7 +124,7 @@ class Auth extends BaseController
     public function doRegister()
     {
         // Nur für eingeloggte Admins
-        if (!session()->get('user_id') || session()->get('user_role') !== 'admin') {
+        if (!session()->get('user_id') || strtoupper((string) session()->get('user_role')) !== 'ADMIN') {
             return redirect()->to('/login');
         }
 
@@ -133,7 +133,7 @@ class Auth extends BaseController
             'email' => 'required|valid_email|is_unique[users.email]',
             'password' => 'required|min_length[6]',
             'password_confirm' => 'required|matches[password]',
-            'role' => 'required|in_list[admin,teacher,coordinator]',
+            'role' => 'required|in_list[ADMIN,TEACHER,COORDINATOR]',
         ];
 
         if (!$this->validate($rules)) {

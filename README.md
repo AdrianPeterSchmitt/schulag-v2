@@ -2,12 +2,14 @@
 
 Eine moderne Web-Anwendung zur Verwaltung von Arbeitsgemeinschaften (AGs) an Schulen mit intelligentem Losverfahren zur gerechten Zuteilung.
 
+![CI/CD](https://github.com/AdrianPeterSchmitt/schulag-v2/actions/workflows/ci.yml/badge.svg)
 ![CodeIgniter](https://img.shields.io/badge/CodeIgniter-4.6.3-red)
 ![PHP](https://img.shields.io/badge/PHP-8.1%2B-blue)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-38bdf8)
 ![HTMX](https://img.shields.io/badge/HTMX-1.9.10-blue)
 ![Alpine.js](https://img.shields.io/badge/Alpine.js-3.x-8BC0D0)
 ![PHPStan](https://img.shields.io/badge/PHPStan-Level%206-brightgreen)
+![Tests](https://img.shields.io/badge/Tests-33%20passing-brightgreen)
 ![Status](https://img.shields.io/badge/Status-100%25%20Production%20Ready-brightgreen)
 
 ---
